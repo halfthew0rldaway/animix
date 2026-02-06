@@ -1,64 +1,218 @@
-import Image from "next/image";
+import AnimeSection from "./components/AnimeSection";
+import Footer from "./components/Footer";
+import HeroCarousel from "./components/HeroCarousel";
+import HistoryList from "./components/HistoryList";
+import Navbar from "./components/Navbar";
+import { AuthUserSession } from "./libs/auth-libs";
+import { enhanceAnimeImages, fetchAniListTrending } from "./libs/anilist";
+import { buildApiUrl, safeFetchJson } from "./libs/api";
 
-export default function Home() {
+type AnimeItem = {
+  slug: string;
+  title: string;
+  poster: string;
+  banner?: string | null;
+  href?: string;
+  episode?: string | number | null;
+  type?: string | null;
+  release_day?: string | null;
+};
+
+type AnimeListResponse = {
+  animes?: AnimeItem[];
+  result?: { animes?: AnimeItem[] };
+  data?: { animes?: AnimeItem[] };
+};
+
+const pickBanner = (item: AnimeItem & Record<string, unknown>) => {
+  const candidates = [
+    item.banner,
+    item.bannerImage as string | undefined,
+    item.background as string | undefined,
+    item.backdrop as string | undefined,
+  ];
+  return candidates.find((value) => typeof value === "string" && value.length > 0) ?? null;
+};
+
+const extractAnimes = (payload: AnimeListResponse): AnimeItem[] => {
+  const list =
+    payload.animes ?? payload.result?.animes ?? payload.data?.animes ?? [];
+  return list.map((item) => ({
+    ...item,
+    banner: pickBanner(item as AnimeItem & Record<string, unknown>),
+  }));
+};
+
+const normalize = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const fillSection = (
+  primary: AnimeItem[],
+  fallback: AnimeItem[],
+  minItems: number
+) => {
+  if (primary.length >= minItems) return primary;
+  const seen = new Set(primary.map((item) => item.slug));
+  const filled = [...primary];
+  for (const item of fallback) {
+    if (filled.length >= minItems) break;
+    if (!seen.has(item.slug)) {
+      seen.add(item.slug);
+      filled.push(item);
+    }
+  }
+  return filled;
+};
+
+export default async function Home() {
+  const session = await AuthUserSession();
+
+  let ongoing: AnimeItem[] = [];
+  let completed: AnimeItem[] = [];
+  let ongoingWarning: string | null = null;
+  let completedWarning: string | null = null;
+
+  try {
+    const [ongoingRes, completedRes] = await Promise.all([
+      safeFetchJson<AnimeListResponse>(buildApiUrl("/ongoing"), {
+        next: { revalidate: 300 },
+      }),
+      safeFetchJson<AnimeListResponse>(buildApiUrl("/completed"), {
+        next: { revalidate: 300 },
+      }),
+    ]);
+
+    if (ongoingRes.ok) {
+      ongoing = extractAnimes(ongoingRes.data);
+    } else {
+      ongoingWarning = "Gagal memuat ongoing";
+    }
+
+    if (completedRes.ok) {
+      completed = extractAnimes(completedRes.data);
+    } else {
+      completedWarning = "Gagal memuat completed";
+    }
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Missing API configuration";
+    ongoingWarning = message;
+    completedWarning = message;
+  }
+
+  if (ongoing.length > 0) {
+    ongoing = await enhanceAnimeImages(ongoing, { limit: 24 });
+  }
+  if (completed.length > 0) {
+    completed = await enhanceAnimeImages(completed, { limit: 24 });
+  }
+
+  const ongoingFilled = fillSection(ongoing, completed, 10);
+  const completedFilled = fillSection(completed, ongoing, 10);
+
+  const heroCandidates = [...ongoingFilled, ...completedFilled];
+  const heroWithBanners = heroCandidates.filter((item) => Boolean(item.banner));
+  let heroItems = [...heroWithBanners, ...heroCandidates].slice(0, 10);
+
+  if (heroWithBanners.length < 5) {
+    const trending = await fetchAniListTrending(10);
+    if (trending.length > 0) {
+      const indexByTitle = new Map(
+        heroCandidates.map((item) => [normalize(item.title), item])
+      );
+      const trendingItems = trending
+        .filter((media) => media?.bannerImage)
+        .map((media) => {
+          const title =
+            media.title?.userPreferred ??
+            media.title?.english ??
+            media.title?.romaji ??
+            "Untitled";
+          const poster =
+            media.coverImage?.extraLarge ??
+            media.coverImage?.large ??
+            "";
+          const banner = media.bannerImage ?? null;
+          const normalized = normalize(title);
+          const match = indexByTitle.get(normalized);
+
+          if (match) {
+            return {
+              ...match,
+              poster: poster || match.poster,
+              banner,
+            };
+          }
+
+          return {
+            slug: normalized.replace(/\s+/g, "-"),
+            title,
+            poster,
+            banner,
+            href: `/search/${encodeURIComponent(title)}`,
+          };
+        });
+
+      heroItems = [...trendingItems, ...heroItems].slice(0, 10);
+    }
+  }
+
+  const trendingFallback = await fetchAniListTrending(30);
+  const trendingItems = trendingFallback.map((media) => {
+    const title =
+      media.title?.userPreferred ??
+      media.title?.english ??
+      media.title?.romaji ??
+      "Untitled";
+    const poster =
+      media.coverImage?.extraLarge ??
+      media.coverImage?.large ??
+      "";
+    const banner = media.bannerImage ?? null;
+    return {
+      slug: normalize(title).replace(/\s+/g, "-"),
+      title,
+      poster,
+      banner,
+      href: `/search/${encodeURIComponent(title)}`,
+    } satisfies AnimeItem;
+  });
+
+  const MIN_SECTION_ITEMS = 18;
+  const ongoingWithTrending = fillSection(
+    ongoingFilled,
+    trendingItems,
+    MIN_SECTION_ITEMS
+  );
+  const completedWithTrending = fillSection(
+    completedFilled,
+    trendingItems,
+    MIN_SECTION_ITEMS
+  );
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
+      <Navbar user={session?.user ?? null} />
+      <main className="mx-auto flex w-full flex-col gap-10 px-4 py-10 sm:px-6 lg:px-10">
+        <HeroCarousel items={heroItems} />
+        <HistoryList />
+        <AnimeSection
+          title="Ongoing"
+          caption="Fresh episodes, still airing."
+          animes={ongoingWithTrending}
+          warning={ongoingWarning ? "Ongoing feed is unavailable. Try refresh." : null}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+        <AnimeSection
+          title="Completed"
+          caption="Finished runs, no waiting."
+          animes={completedWithTrending}
+          warning={completedWarning ? "Completed feed is unavailable. Try refresh." : null}
+        />
+        <Footer />
       </main>
     </div>
   );

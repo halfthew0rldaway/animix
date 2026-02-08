@@ -111,179 +111,214 @@ export default async function DetailPage({
 
   const watchHref = detail?.episodes?.[0]
     ? `/watch/${encodeURIComponent(detail.episodes[0].slug)}?slug=${encodeURIComponent(
-        animeSlug
-      )}&title=${encodeURIComponent(title)}&image=${encodeURIComponent(poster)}`
+      animeSlug
+    )}&title=${encodeURIComponent(title)}&image=${encodeURIComponent(poster)}`
     : null;
 
   return (
-    <div className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
+    <div className="min-h-screen bg-zinc-950">
       <Navbar user={session?.user ?? null} />
-      <main className="mx-auto flex w-full flex-col gap-10 px-4 py-10 sm:px-6 lg:px-10">
-        {error ? (
-          <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700 dark:border-rose-800 dark:bg-rose-950/40 dark:text-rose-200">
-            Details are unavailable. Please refresh.
-          </div>
-        ) : null}
 
-        {detail ? (
-          <>
-            <section className="relative overflow-hidden rounded-3xl border border-zinc-200 bg-zinc-900 text-white dark:border-zinc-800">
-              {banner ? (
-                <div
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url(${banner})` }}
+      {error ? (
+        <div className="flex min-h-screen items-center justify-center p-4">
+          <div className="rounded-2xl border border-rose-500/50 bg-rose-500/10 p-8 text-center backdrop-blur-sm">
+            <p className="text-rose-400">Details are unavailable. Please refresh.</p>
+          </div>
+        </div>
+      ) : null}
+
+      {detail ? (
+        <main className="relative">
+          {/* Compact Hero Section */}
+          <section className="relative h-[400px] overflow-hidden">
+            {/* Background with multiple character images */}
+            {banner ? (
+              <div className="absolute inset-0">
+                <img
+                  src={banner}
+                  alt={title}
+                  className="h-full w-full object-cover object-top"
                 />
-              ) : null}
-              <div className="absolute inset-0 bg-zinc-950/55" />
-              <div className="relative grid gap-8 p-8 lg:grid-cols-[240px_1fr]">
-                <div className="flex flex-col gap-4">
-                  {poster ? (
+                {/* Dark gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/60 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-r from-zinc-950/80 via-transparent to-transparent" />
+              </div>
+            ) : (
+              <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 to-zinc-950" />
+            )}
+
+            {/* Content at bottom-left */}
+            <div className="absolute bottom-0 left-0 right-0 px-4 sm:px-6 lg:px-10 pb-6">
+              <div className="max-w-7xl mx-auto">
+                {/* Small subtitle */}
+                {detail.synonym ? (
+                  <p className="text-xs uppercase tracking-[0.2em] text-zinc-400 mb-2">
+                    {detail.synonym}
+                  </p>
+                ) : (
+                  <p className="text-xs uppercase tracking-[0.2em] text-zinc-400 mb-2">
+                    ANIME DETAILS
+                  </p>
+                )}
+
+                {/* Large Title */}
+                <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 drop-shadow-2xl">
+                  {title}
+                </h1>
+
+                {/* Compact Genre badges */}
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {genres.slice(0, 4).map((genre) => (
+                    <span
+                      key={genre.slug}
+                      className="px-2.5 py-1 bg-zinc-800/80 backdrop-blur-sm border border-zinc-700 rounded text-xs font-medium uppercase tracking-wide text-zinc-300"
+                    >
+                      {genre.name}
+                    </span>
+                  ))}
+                  <span className="px-2.5 py-1 bg-zinc-800/80 backdrop-blur-sm border border-zinc-700 rounded text-xs font-medium uppercase tracking-wide text-zinc-300">
+                    ANIME
+                  </span>
+                </div>
+
+                {/* Info Cards Row */}
+                <div className="grid grid-cols-3 sm:grid-cols-5 gap-3 max-w-4xl">
+                  {/* Play Button */}
+                  {watchHref ? (
+                    <Link
+                      href={watchHref}
+                      className="flex items-center justify-center bg-green-600 hover:bg-green-500 text-white rounded-lg h-24 font-bold transition-all hover:scale-105 shadow-lg"
+                    >
+                      <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                      </svg>
+                    </Link>
+                  ) : null}
+
+                  {/* Status */}
+                  <div className="relative bg-zinc-800/90 backdrop-blur-sm border border-zinc-700/50 rounded-lg h-24 overflow-hidden flex items-center justify-center">
+                    <div className="absolute left-0 top-0 bottom-0 w-8 flex items-center justify-center bg-zinc-900/50">
+                      <p className="text-[9px] uppercase tracking-widest text-zinc-500 [writing-mode:vertical-lr] rotate-180">STATUS</p>
+                    </div>
+                    <p className="text-xl font-bold text-white pl-6">{status || 'Ongoing'}</p>
+                  </div>
+
+                  {/* Episodes */}
+                  <div className="relative bg-zinc-800/90 backdrop-blur-sm border border-zinc-700/50 rounded-lg h-24 overflow-hidden flex items-center justify-center">
+                    <div className="absolute left-0 top-0 bottom-0 w-8 flex items-center justify-center bg-zinc-900/50">
+                      <p className="text-[9px] uppercase tracking-widest text-zinc-500 [writing-mode:vertical-lr] rotate-180">EPISODES</p>
+                    </div>
+                    <p className="text-xl font-bold text-white pl-6">{totalEpisodes || '?'}</p>
+                  </div>
+
+                  {/* Release */}
+                  <div className="relative bg-zinc-800/90 backdrop-blur-sm border border-zinc-700/50 rounded-lg h-24 overflow-hidden flex items-center justify-center">
+                    <div className="absolute left-0 top-0 bottom-0 w-8 flex items-center justify-center bg-zinc-900/50">
+                      <p className="text-[9px] uppercase tracking-widest text-zinc-500 [writing-mode:vertical-lr] rotate-180">RELEASE</p>
+                    </div>
+                    <p className="text-base font-bold text-white pl-6">{detail.aired || 'Unknown'}</p>
+                  </div>
+
+                  {/* Duration */}
+                  <div className="relative bg-zinc-800/90 backdrop-blur-sm border border-zinc-700/50 rounded-lg h-24 overflow-hidden flex items-center justify-center">
+                    <div className="absolute left-0 top-0 bottom-0 w-8 flex items-center justify-center bg-zinc-900/50">
+                      <p className="text-[9px] uppercase tracking-widest text-zinc-500 [writing-mode:vertical-lr] rotate-180">DURATION</p>
+                    </div>
+                    <p className="text-base font-bold text-white pl-6">{detail.duration || 'Unknown'}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Synopsis & Poster Section */}
+          <div className="px-4 sm:px-6 lg:px-10 py-8 bg-zinc-950">
+            <div className="max-w-7xl mx-auto">
+              <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
+                {/* Left - Synopsis & Episodes */}
+                <div className="space-y-6">
+                  {/* Synopsis */}
+                  <div>
+                    <h2 className="text-sm font-bold text-zinc-400 uppercase tracking-wider mb-3">SYNOPSIS</h2>
+                    {synopsis ? (
+                      <p className="text-sm leading-relaxed text-zinc-400">{synopsis}</p>
+                    ) : (
+                      <p className="text-sm text-zinc-600">Synopsis not available.</p>
+                    )}
+                  </div>
+
+                  {/* Episodes Grid */}
+                  {detail?.episodes && detail.episodes.length > 0 ? (
+                    <div>
+                      <h2 className="text-sm font-bold text-zinc-400 uppercase tracking-wider mb-3">EPISODES</h2>
+                      <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2">
+                        {detail.episodes.map((episode, idx) => (
+                          <Link
+                            key={episode.slug}
+                            href={`/watch/${encodeURIComponent(episode.slug)}?slug=${encodeURIComponent(
+                              animeSlug
+                            )}&title=${encodeURIComponent(title)}&image=${encodeURIComponent(poster)}`}
+                            className="bg-zinc-900 hover:bg-green-600 border border-zinc-800 hover:border-green-500 rounded-lg p-3 text-center text-sm font-semibold text-white transition-all hover:scale-105"
+                          >
+                            {idx + 1}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+
+                {/* Right - Poster */}
+                {poster ? (
+                  <div className="space-y-4">
                     <img
                       src={poster}
                       alt={title}
-                      className="aspect-[2/3] w-full rounded-2xl border border-white/20 object-cover"
-                      loading="lazy"
-                      decoding="async"
+                      className="w-full aspect-[2/3] object-cover rounded-lg border border-zinc-800"
                     />
-                  ) : null}
-                  <div className="flex flex-col gap-3">
-                    {watchHref ? (
-                      <Link
-                        href={watchHref}
-                        className="rounded-full bg-white px-4 py-2 text-center text-xs font-semibold uppercase tracking-[0.2em] text-zinc-900 transition hover:-translate-y-[1px] active:translate-y-0"
-                      >
-                        Watch Now
-                      </Link>
-                    ) : null}
+
+                    {/* Additional Info */}
+                    <div className="bg-zinc-900/50 border border-zinc-800 rounded-lg p-4 space-y-3 text-sm">
+                      {detail.studio ? (
+                        <div>
+                          <p className="text-xs uppercase tracking-wider text-zinc-500">Studio</p>
+                          <p className="text-white font-medium">{detail.studio}</p>
+                        </div>
+                      ) : null}
+                      {season ? (
+                        <div>
+                          <p className="text-xs uppercase tracking-wider text-zinc-500">Season</p>
+                          <p className="text-white font-medium">{season}</p>
+                        </div>
+                      ) : null}
+                      {detail.author ? (
+                        <div>
+                          <p className="text-xs uppercase tracking-wider text-zinc-500">Author</p>
+                          <p className="text-white font-medium">{detail.author}</p>
+                        </div>
+                      ) : null}
+                    </div>
+
+                    {/* Download Button */}
                     {detail.batch?.slug ? (
                       <Link
                         href={`/download/${encodeURIComponent(detail.batch.slug)}`}
-                        className="rounded-full border border-white/30 px-4 py-2 text-center text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:-translate-y-[1px] hover:border-white/60 active:translate-y-0"
+                        className="block w-full bg-indigo-600 hover:bg-indigo-500 text-white text-center rounded-lg py-3 font-bold text-sm uppercase tracking-wide transition-all hover:scale-105"
                       >
                         Download Batch
                       </Link>
                     ) : null}
                   </div>
-                </div>
-                <div className="flex flex-col justify-between gap-6">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.35em] text-zinc-300">
-                      Anime Details
-                    </p>
-                    <h1 className="mt-3 text-3xl font-semibold text-white md:text-4xl [text-shadow:0_2px_18px_rgba(0,0,0,0.55)]">
-                      {title}
-                    </h1>
-                    {detail.synonym ? (
-                      <p className="mt-2 text-sm text-zinc-300">
-                        {detail.synonym}
-                      </p>
-                    ) : null}
-                  </div>
-                  <div className="grid gap-3 text-sm text-zinc-200 sm:grid-cols-2">
-                    {status ? <span>Status: {status}</span> : null}
-                    {season ? <span>Season: {season}</span> : null}
-                    {detail?.aired ? <span>Aired: {detail.aired}</span> : null}
-                    {detail?.duration ? (
-                      <span>Duration: {detail.duration}</span>
-                    ) : null}
-                    {detail?.studio ? <span>Studio: {detail.studio}</span> : null}
-                    {detail?.author ? <span>Author: {detail.author}</span> : null}
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <section className="rounded-3xl border border-zinc-200 bg-zinc-100 p-8 dark:border-zinc-800 dark:bg-zinc-900">
-              <div className="grid gap-8 lg:grid-cols-[2fr_1fr]">
-                <div className="flex flex-col gap-4">
-                  <h2 className="text-lg font-semibold uppercase tracking-[0.2em] text-zinc-800 dark:text-zinc-100">
-                    Synopsis
-                  </h2>
-                  {synopsis ? (
-                    <p className="synopsis text-sm leading-7 text-zinc-600 dark:text-zinc-300">
-                      {synopsis}
-                    </p>
-                  ) : (
-                    <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                      Sinopsis belum tersedia.
-                    </p>
-                  )}
-                </div>
-                <div className="flex flex-col gap-4">
-                  <h2 className="text-lg font-semibold uppercase tracking-[0.2em] text-zinc-800 dark:text-zinc-100">
-                    Genres
-                  </h2>
-                  {genres && genres.length > 0 ? (
-                    <div className="flex flex-wrap gap-2">
-                      {genres.map((genre) => (
-                        <span
-                          key={genre.slug}
-                          className="rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs uppercase tracking-[0.15em] text-zinc-500 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300"
-                        >
-                          {genre.name}
-                        </span>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                      Genre belum tersedia.
-                    </p>
-                  )}
-                </div>
-              </div>
-              <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                {status ? (
-                  <div className="rounded-2xl border border-zinc-200 bg-white p-4 text-sm text-zinc-600 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300">
-                    <p className="text-xs uppercase tracking-[0.2em] text-zinc-400">Status</p>
-                    <p className="mt-2 text-lg font-semibold text-zinc-900 dark:text-white">{status}</p>
-                  </div>
-                ) : null}
-                {typeof totalEpisodes === "number" ? (
-                  <div className="rounded-2xl border border-zinc-200 bg-white p-4 text-sm text-zinc-600 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300">
-                    <p className="text-xs uppercase tracking-[0.2em] text-zinc-400">Episodes</p>
-                    <p className="mt-2 text-lg font-semibold text-zinc-900 dark:text-white">{totalEpisodes}</p>
-                  </div>
-                ) : null}
-                {season ? (
-                  <div className="rounded-2xl border border-zinc-200 bg-white p-4 text-sm text-zinc-600 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300">
-                    <p className="text-xs uppercase tracking-[0.2em] text-zinc-400">Season</p>
-                    <p className="mt-2 text-lg font-semibold text-zinc-900 dark:text-white">{season}</p>
-                  </div>
-                ) : null}
-                {detail?.duration ? (
-                  <div className="rounded-2xl border border-zinc-200 bg-white p-4 text-sm text-zinc-600 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300">
-                    <p className="text-xs uppercase tracking-[0.2em] text-zinc-400">Duration</p>
-                    <p className="mt-2 text-lg font-semibold text-zinc-900 dark:text-white">{detail.duration}</p>
-                  </div>
                 ) : null}
               </div>
-            </section>
-
-            <section className="flex flex-col gap-4">
-              <h2 className="text-lg font-semibold uppercase tracking-[0.2em] text-zinc-800 dark:text-zinc-100">
-                Episodes
-              </h2>
-              <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                {detail?.episodes?.map((episode) => (
-                  <Link
-                    key={episode.slug}
-                      href={`/watch/${encodeURIComponent(episode.slug)}?slug=${encodeURIComponent(
-                        animeSlug
-                      )}&title=${encodeURIComponent(title)}&image=${encodeURIComponent(poster)}`}
-                      className="rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-700 transition hover:-translate-y-[1px] hover:border-zinc-400 active:translate-y-0 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-200"
-                    >
-                      {episode.name}
-                    </Link>
-                  ))}
-                </div>
-            </section>
-          </>
-        ) : (
-          <div className="rounded-2xl border border-dashed border-zinc-200 p-6 text-sm text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
-            Detail tidak ditemukan.
+            </div>
           </div>
-        )}
-      </main>
+        </main>
+      ) : (
+        <div className="flex min-h-screen items-center justify-center p-4">
+          <p className="text-zinc-500">Detail not found.</p>
+        </div>
+      )}
     </div>
   );
 }

@@ -32,6 +32,11 @@ const brandFont = localFont({
   variable: "--font-brand",
 });
 
+const jemberFont = localFont({
+  src: "../public/fonts/Jember Sketch.ttf",
+  variable: "--font-jember",
+});
+
 export const metadata: Metadata = {
   title: "Animix",
   description: "Streaming anime mengikuti flow Juju Otaku 2.0",
@@ -45,7 +50,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${displayFont.variable} ${bodyFont.variable} ${monoFont.variable} ${typewriterFont.variable} ${brandFont.variable} antialiased`}
+        className={`${displayFont.variable} ${bodyFont.variable} ${monoFont.variable} ${typewriterFont.variable} ${brandFont.variable} ${jemberFont.variable} antialiased`}
       >
         <NextAuthProvider>
           {children}

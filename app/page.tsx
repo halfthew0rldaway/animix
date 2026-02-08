@@ -1,4 +1,4 @@
-import AnimeSection from "./components/AnimeSection";
+import AnimeSectionInfinite from "./components/AnimeSectionInfinite";
 import Footer from "./components/Footer";
 import HeroCarousel from "./components/HeroCarousel";
 import HistoryList from "./components/HistoryList";
@@ -182,7 +182,7 @@ export default async function Home() {
     } satisfies AnimeItem;
   });
 
-  const MIN_SECTION_ITEMS = 18;
+  const MIN_SECTION_ITEMS = 24;
   const ongoingWithTrending = fillSection(
     ongoingFilled,
     trendingItems,
@@ -200,16 +200,20 @@ export default async function Home() {
       <main className="mx-auto flex w-full flex-col gap-10 px-4 py-10 sm:px-6 lg:px-10">
         <HeroCarousel items={heroItems} />
         <HistoryList />
-        <AnimeSection
+        <AnimeSectionInfinite
           title="Ongoing"
           caption="Fresh episodes, still airing."
-          animes={ongoingWithTrending}
+          initialAnimes={ongoingWithTrending}
+          initialPage={2}
+          fetchUrl="/api/trending?type=ongoing"
           warning={ongoingWarning ? "Ongoing feed is unavailable. Try refresh." : null}
         />
-        <AnimeSection
+        <AnimeSectionInfinite
           title="Completed"
           caption="Finished runs, no waiting."
-          animes={completedWithTrending}
+          initialAnimes={completedWithTrending}
+          initialPage={2}
+          fetchUrl="/api/trending?type=completed"
           warning={completedWarning ? "Completed feed is unavailable. Try refresh." : null}
         />
         <Footer />

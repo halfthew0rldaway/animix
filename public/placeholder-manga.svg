@@ -1,0 +1,24 @@
+<!-- Placeholder SVG for manga covers -->
+<svg width="300" height="400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="halftone" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="10" cy="10" r="3" fill="#ff6b35" opacity="0.3"/>
+    </pattern>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="300" height="400" fill="#fef9f3"/>
+  
+  <!-- Halftone pattern -->
+  <rect width="300" height="400" fill="url(#halftone)"/>
+  
+  <!-- Border -->
+  <rect x="10" y="10" width="280" height="380" fill="none" stroke="#2d2d2d" stroke-width="4"/>
+  
+  <!-- Icon -->
+  <text x="150" y="180" font-family="Arial, sans-serif" font-size="80" text-anchor="middle" fill="#2d2d2d" opacity="0.3">📖</text>
+  
+  <!-- Text -->
+  <text x="150" y="240" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#2d2d2d" opacity="0.5">NO IMAGE</text>
+  <text x="150" y="260" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#2d2d2d" opacity="0.4">AVAILABLE</text>
+</svg>

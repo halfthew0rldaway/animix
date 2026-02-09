@@ -65,13 +65,17 @@ export default function MangaCard({ manga, onImageError }: MangaCardProps) {
                         onError={handleError}
                     />
                     <div className="manga-card-overlay">
-                        <div className="manga-card-badge">READ</div>
+                        <div className="manga-card-badge">BACA</div>
                     </div>
                 </div>
                 <div className="manga-card-content">
                     <h3 className="manga-card-title">{manga.title}</h3>
                     {manga.status && (
-                        <span className="manga-card-status">{manga.status}</span>
+                        <span className="manga-card-status">
+                            {manga.status.toLowerCase() === "ongoing" ? "BERLANJUT" :
+                                manga.status.toLowerCase().includes("complete") ? "TAMAT" :
+                                    manga.status.toUpperCase()}
+                        </span>
                     )}
                 </div>
             </div>

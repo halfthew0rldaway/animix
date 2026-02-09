@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 import { notifyRateLimit, updateRateLimitUsage } from "../../libs/rateLimitClient";
 import { AnimeLoader } from "@/app/components/FancyLoaders";
 
@@ -46,7 +47,6 @@ export default function WatchPage({
   const searchParams = useSearchParams();
   const { data: session } = useSession();
 
-  const apiBase = process.env.NEXT_PUBLIC_API_URL ?? "";
   const useDatabase = process.env.NEXT_PUBLIC_USE_DATABASE === "true";
   const enableEpisodeCheck =
     process.env.NEXT_PUBLIC_ENABLE_EPISODE_CHECK === "true";
@@ -89,12 +89,6 @@ export default function WatchPage({
   }, [searchParams]);
 
   useEffect(() => {
-    if (!apiBase) {
-      setError("Missing NEXT_PUBLIC_API_URL");
-      setLoading(false);
-      return;
-    }
-
     const loadEpisode = async () => {
       setLoading(true);
       setError(null);
@@ -132,7 +126,7 @@ export default function WatchPage({
     };
 
     loadEpisode();
-  }, [apiBase, episodeSlug]);
+  }, [episodeSlug]);
 
   useEffect(() => {
     if (episodeData?.title) {
@@ -202,7 +196,7 @@ export default function WatchPage({
 
     checkExists(prev, setHasPrev);
     checkExists(next, setHasNext);
-  }, [episodeSlug, apiBase]);
+  }, [episodeSlug]);
 
   useEffect(() => {
     if (!episodeData || !episodeData.title) return;
@@ -254,13 +248,13 @@ export default function WatchPage({
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex flex-col gap-2">
             <p className="text-xs uppercase tracking-[0.35em] text-zinc-500 dark:text-zinc-400">
-              Watch
+              NONTON
             </p>
             <h1 className="text-2xl font-semibold text-zinc-900 dark:text-white">
-              {episodeData?.title ?? "Loading episode"}
+              {episodeData?.title ?? "MEMUAT EPISODE..."}
             </h1>
             <p className="text-sm text-zinc-500 dark:text-zinc-400">
-              {animeContext.title || animeContext.slug || "Now playing."}
+              {animeContext.title || animeContext.slug || "SEDANG DIPUTAR."}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -269,7 +263,7 @@ export default function WatchPage({
                 href={`/watch/${encodeURIComponent(prevSlug)}`}
                 className="rounded-full border border-zinc-200 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-zinc-700 transition hover:-translate-y-[1px] hover:border-zinc-400 active:translate-y-0 dark:border-zinc-800 dark:text-zinc-200"
               >
-                Prev
+                SEBELUMNYA
               </Link>
             ) : null}
             {nextSlug && hasNext ? (
@@ -277,7 +271,7 @@ export default function WatchPage({
                 href={`/watch/${encodeURIComponent(nextSlug)}`}
                 className="rounded-full border border-zinc-200 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-zinc-700 transition hover:-translate-y-[1px] hover:border-zinc-400 active:translate-y-0 dark:border-zinc-800 dark:text-zinc-200"
               >
-                Next
+                SELANJUTNYA
               </Link>
             ) : null}
           </div>
@@ -285,7 +279,7 @@ export default function WatchPage({
 
         {error ? (
           <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700 dark:border-rose-800 dark:bg-rose-950/40 dark:text-rose-200">
-            Stream unavailable. Try another server.
+            Stream tidak tersedia. Coba server lain.
           </div>
         ) : null}
 
@@ -300,7 +294,7 @@ export default function WatchPage({
           ) : (
             <div className="flex aspect-video w-full items-center justify-center bg-black">
               {loading ? <AnimeLoader /> : (
-                <div className="text-sm text-zinc-500">Stream unavailable</div>
+                <div className="text-sm text-zinc-500">Stream tidak tersedia</div>
               )}
             </div>
           )}
@@ -311,7 +305,7 @@ export default function WatchPage({
             Pilih Server
           </h2>
           <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-            <span className="typewriter">Pick the smoothest server.</span>
+            <span className="typewriter">Pilih server yang paling lancar.</span>
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
             {streamList.map((stream, index) => (
@@ -330,6 +324,7 @@ export default function WatchPage({
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

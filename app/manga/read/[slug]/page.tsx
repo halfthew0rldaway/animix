@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { getChapterPages } from "@/app/libs/manga-api";
 import Link from "next/link";
 import { MangaLoader } from "@/app/components/FancyLoaders";
+import Footer from "@/app/components/Footer";
 
 type PageProps = {
     params: Promise<{ slug: string }>;
@@ -114,7 +115,7 @@ export default function MangaReaderPage({ params }: PageProps) {
                 <div className="manga-reader-comic-header-panel hover-lift">
                     <button onClick={handleBack} className="manga-reader-comic-back">
                         <span className="manga-reader-comic-back-arrow"><i className="fa-solid fa-arrow-left"></i></span>
-                        <span className="manga-reader-comic-back-text">BACK</span>
+                        <span className="manga-reader-comic-back-text">KEMBALI</span>
                     </button>
 
                     <div className="manga-reader-comic-title-panel">
@@ -129,7 +130,7 @@ export default function MangaReaderPage({ params }: PageProps) {
 
                     <Link href="/manga" className="manga-reader-comic-home">
                         <span className="manga-reader-comic-home-icon"><i className="fa-solid fa-house"></i></span>
-                        <span className="manga-reader-comic-home-text">HOME</span>
+                        <span className="manga-reader-comic-home-text">BERANDA</span>
                     </Link>
                 </div>
 
@@ -182,7 +183,7 @@ export default function MangaReaderPage({ params }: PageProps) {
                             {/* Page Number Overlay */}
                             <div className="manga-reader-page-number">
                                 <div className="manga-reader-page-number-badge">
-                                    PAGE {index + 1}
+                                    HAL {index + 1}
                                 </div>
                             </div>
                         </div>
@@ -190,10 +191,9 @@ export default function MangaReaderPage({ params }: PageProps) {
                 ) : (
                     <div className="manga-reader-comic-empty">
                         <div className="manga-reader-comic-empty-panel">
-                            <div className="manga-reader-comic-empty-border"></div>
-                            <div className="manga-reader-comic-empty-content">
-                                <p>NO PAGES AVAILABLE</p>
-                            </div>
+                            <div className="manga-loading-spinner"></div>
+                            <div className="loading-text">MOHON TUNGGU...</div>
+                            <p>TIDAK ADA HALAMAN</p>
                         </div>
                     </div>
                 )}
@@ -205,16 +205,19 @@ export default function MangaReaderPage({ params }: PageProps) {
                     <div className="manga-reader-comic-footer-border"></div>
                     <div className="manga-reader-comic-footer-content">
                         <div className="manga-reader-comic-footer-info">
-                            <div className="manga-reader-comic-footer-title">{chapterTitle || "READING..."}</div>
-                            <div className="manga-reader-comic-footer-pages">{pages.length} PAGES</div>
+                            <div className="manga-reader-comic-footer-title">{chapterTitle || "MEMBACA..."}</div>
+                            <div className="manga-reader-comic-footer-pages">{pages.length} HALAMAN</div>
                         </div>
                         <button onClick={handleBack} className="manga-reader-comic-footer-btn">
-                            <span>BACK TO CHAPTERS</span>
+                            <span>DAFTAR BAB</span>
                             <span className="manga-reader-comic-footer-arrow"><i className="fa-solid fa-list"></i></span>
                         </button>
                     </div>
                 </div>
             </div>
+
+            {/* Comic Footer */}
+            <Footer variant="comic" />
         </div>
     );
 }

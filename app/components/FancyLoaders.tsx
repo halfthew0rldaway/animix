@@ -1,6 +1,6 @@
 import React from "react";
 
-export function AnimeLoader({ title = "Initializing Stream" }: { title?: string }) {
+export function AnimeLoader({ title = "LOADING ANIMIX..." }: { title?: string }) {
     return (
         <div className="flex h-full w-full flex-col items-center justify-center gap-6 p-10 min-h-[50vh]">
             <div className="relative flex h-20 w-20 items-center justify-center">
@@ -34,7 +34,7 @@ export function AnimeLoader({ title = "Initializing Stream" }: { title?: string 
     );
 }
 
-export function MangaLoader({ title = "LOADING!!", subTitle = "FETCHING PAGES" }: { title?: string; subTitle?: string }) {
+export function MangaLoader({ title = "SABAR!!", subTitle = "AMBIL HALAMAN" }: { title?: string; subTitle?: string }) {
     return (
         <div className="flex h-screen w-full flex-col items-center justify-center bg-zinc-50 dark:bg-zinc-950">
             <div className="relative overflow-hidden border-4 border-black bg-white p-12 shadow-[12px_12px_0_0_#000000] dark:border-zinc-200 dark:shadow-[12px_12px_0_0_#ffffff]">

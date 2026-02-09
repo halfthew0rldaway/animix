@@ -5,6 +5,7 @@ import "./globals.css";
 import NextAuthProvider from "./components/NextAuthProvider";
 import RateLimitToast from "./components/RateLimitToast";
 import RateLimitWidget from "./components/RateLimitWidget";
+import FirstVisitModal from "./components/FirstVisitModal";
 
 const displayFont = Outfit({
   variable: "--font-display",
@@ -39,7 +40,7 @@ const jemberFont = localFont({
 
 export const metadata: Metadata = {
   title: "Animix",
-  description: "Streaming anime mengikuti flow Juju Otaku 2.0",
+  description: "buat nonton dan baca, almost zero ads hehe",
 };
 
 export default function RootLayout({
@@ -56,6 +57,7 @@ export default function RootLayout({
           {children}
           <RateLimitToast />
           <RateLimitWidget />
+          <FirstVisitModal />
         </NextAuthProvider>
       </body>
     </html>

@@ -153,7 +153,7 @@ export default async function DetailPage({
                   </p>
                 ) : (
                   <p className="text-[10px] uppercase tracking-[0.3em] text-zinc-400 mb-2 font-bold">
-                    ANIME DETAILS
+                    DETAIL ANIME
                   </p>
                 )}
 
@@ -184,7 +184,7 @@ export default async function DetailPage({
                       <svg className="w-10 h-10 text-white mb-1" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
                       </svg>
-                      <span className="text-xs font-black text-white uppercase tracking-wider font-[family-name:var(--font-display)]">PLAY</span>
+                      <span className="text-xs font-black text-white uppercase tracking-wider font-[family-name:var(--font-display)]">NONTON</span>
                     </Link>
                   ) : null}
 
@@ -201,7 +201,7 @@ export default async function DetailPage({
                   {/* Episodes Card - Solid Dark */}
                   <div className="relative flex flex-row items-center bg-zinc-950 border border-zinc-800 rounded-2xl flex-1 min-w-[120px] h-24 overflow-hidden group hover:border-zinc-700 transition-colors">
                     <div className="h-full w-12 flex items-center justify-center bg-zinc-900 border-r border-zinc-800 group-hover:bg-zinc-800 transition-colors">
-                      <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-bold [writing-mode:vertical-lr] rotate-180 whitespace-nowrap font-[family-name:var(--font-display)]">EPISODES</p>
+                      <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-bold [writing-mode:vertical-lr] rotate-180 whitespace-nowrap font-[family-name:var(--font-display)]">EPS</p>
                     </div>
                     <div className="flex-1 flex items-center justify-center px-4">
                       <p className="text-3xl font-black text-white tracking-tight font-[family-name:var(--font-display)] tracking-wider">{totalEpisodes || '130'}</p>
@@ -211,7 +211,7 @@ export default async function DetailPage({
                   {/* Release Card - Solid Dark */}
                   <div className="relative flex flex-row items-center bg-zinc-950 border border-zinc-800 rounded-2xl flex-1 min-w-[140px] h-24 overflow-hidden group hover:border-zinc-700 transition-colors">
                     <div className="h-full w-12 flex items-center justify-center bg-zinc-900 border-r border-zinc-800 group-hover:bg-zinc-800 transition-colors">
-                      <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-bold [writing-mode:vertical-lr] rotate-180 whitespace-nowrap font-[family-name:var(--font-display)]">RELEASE</p>
+                      <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-bold [writing-mode:vertical-lr] rotate-180 whitespace-nowrap font-[family-name:var(--font-display)]">TAYANG</p>
                     </div>
                     <div className="flex-1 flex items-center justify-center px-4">
                       <p className="text-sm font-black text-white text-center leading-tight tracking-tight font-[family-name:var(--font-display)] tracking-wider">{detail.aired || 'Jul 5, 2015'}</p>
@@ -222,7 +222,7 @@ export default async function DetailPage({
                   {detail.duration ? (
                     <div className="relative flex flex-row items-center bg-zinc-950 border border-zinc-800 rounded-2xl flex-1 min-w-[120px] h-24 overflow-hidden group hover:border-zinc-700 transition-colors">
                       <div className="h-full w-12 flex items-center justify-center bg-zinc-900 border-r border-zinc-800 group-hover:bg-zinc-800 transition-colors">
-                        <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-bold [writing-mode:vertical-lr] rotate-180 whitespace-nowrap font-[family-name:var(--font-display)]">DURATION</p>
+                        <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-bold [writing-mode:vertical-lr] rotate-180 whitespace-nowrap font-[family-name:var(--font-display)]">DURASI</p>
                       </div>
                       <div className="flex-1 flex items-center justify-center px-4">
                         <p className="text-sm font-black text-white tracking-tight font-[family-name:var(--font-display)] tracking-wider">{detail.duration}</p>
@@ -244,7 +244,7 @@ export default async function DetailPage({
                   <div className="flex-1 bg-zinc-900/60 backdrop-blur-sm border-2 border-zinc-800 rounded-2xl p-12 shadow-2xl flex flex-col animate-slide-up delay-300 opacity-0" style={{ animationFillMode: 'forwards' }}>
                     <div className="flex items-center gap-4 mb-8">
                       <span className="w-2 h-10 bg-green-500 rounded-full shadow-lg shadow-green-500/50"></span>
-                      <h2 className="text-xl font-black text-zinc-300 uppercase tracking-widest font-[family-name:var(--font-display)]">SYNOPSIS</h2>
+                      <h2 className="text-xl font-black text-zinc-300 uppercase tracking-widest font-[family-name:var(--font-display)]">SINOPSIS</h2>
                     </div>
                     {synopsis ? (
                       <div className="max-w-4xl">
@@ -253,7 +253,7 @@ export default async function DetailPage({
                         </p>
                       </div>
                     ) : (
-                      <p className="text-base text-zinc-600">Synopsis not available.</p>
+                      <p className="text-base text-zinc-600">Sinopsis belum tersedia.</p>
                     )}
                   </div>
 
@@ -262,7 +262,7 @@ export default async function DetailPage({
                     <div className="bg-zinc-900/60 backdrop-blur-sm border-2 border-zinc-800 rounded-2xl p-12 shadow-2xl animate-slide-up delay-500 opacity-0" style={{ animationFillMode: 'forwards' }}>
                       <div className="flex items-center gap-4 mb-8">
                         <span className="w-2 h-10 bg-green-500 rounded-full shadow-lg shadow-green-500/50"></span>
-                        <h2 className="text-xl font-black text-zinc-300 uppercase tracking-widest font-[family-name:var(--font-display)]">EPISODES</h2>
+                        <h2 className="text-xl font-black text-zinc-300 uppercase tracking-widest font-[family-name:var(--font-display)]">DAFTAR EPISODE</h2>
                       </div>
                       <div className="grid grid-cols-5 sm:grid-cols-7 md:grid-cols-9 lg:grid-cols-11 xl:grid-cols-13 gap-3">
                         {detail.episodes.map((episode, idx) => (

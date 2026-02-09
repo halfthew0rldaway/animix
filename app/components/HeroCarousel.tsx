@@ -89,7 +89,7 @@ export default function HeroCarousel({ items }: HeroCarouselProps) {
         <div className="flex flex-col justify-between gap-6">
           <div className="space-y-4">
             <p className="text-xs uppercase tracking-[0.35em] text-green-400 font-bold font-[family-name:var(--font-display)] animate-fade-in">
-              FEATURED
+              POPULER
             </p>
             <h1 className="text-3xl font-black md:text-5xl drop-shadow-2xl font-[family-name:var(--font-display)] leading-tight tracking-wide animate-slide-up">
               {current.title}
@@ -106,7 +106,7 @@ export default function HeroCarousel({ items }: HeroCarouselProps) {
               ) : null}
             </div>
             <p className="text-sm text-zinc-300 max-w-xl font-medium leading-relaxed drop-shadow-md animate-slide-up delay-200 opacity-0" style={{ animationFillMode: 'forwards' }}>
-              Spotlight pick from the latest updates. Watch the newest episode now.
+              Rekomendasi terbaik minggu ini. Jangan sampai ketinggalan episode terbarunya.
             </p>
           </div>
 
@@ -118,14 +118,14 @@ export default function HeroCarousel({ items }: HeroCarouselProps) {
               }
               className="rounded-full bg-green-600 px-8 py-4 text-xs font-black uppercase tracking-[0.25em] text-white shadow-xl shadow-green-900/40 transition hover:-translate-y-1 hover:bg-green-500 hover:shadow-green-500/30 active:translate-y-0"
             >
-              Watch Now
+              NONTON SEKARANG
             </Link>
             <button
               type="button"
               onClick={() => setAutoPlay((prev) => !prev)}
               className="rounded-full border-2 border-white/20 px-6 py-3.5 text-xs font-bold uppercase tracking-[0.2em] text-white transition hover:-translate-y-1 hover:border-white/60 hover:bg-white/5 active:translate-y-0"
             >
-              {autoPlay ? "Pause" : "Play"} Hero
+              {autoPlay ? "JEDA" : "PUTAR"} TRAILER
             </button>
             <div className="ml-auto flex items-center gap-2">
               <button
@@ -150,7 +150,7 @@ export default function HeroCarousel({ items }: HeroCarouselProps) {
 
         <div className="rounded-2xl border border-zinc-800 bg-zinc-950/80 p-6 backdrop-blur-md shadow-2xl flex flex-col h-full animate-fade-in delay-500 opacity-0" style={{ animationFillMode: 'forwards' }}>
           <p className="text-xs uppercase tracking-[0.25em] text-zinc-500 font-bold mb-4 font-[family-name:var(--font-display)]">
-            RECOMMENDATIONS
+            REKOMENDASI
           </p>
           <div className="grid gap-3 sm:grid-cols-2 flex-1 content-start">
             {recommendations.length > 0 ? recommendations.map((item, key) => (

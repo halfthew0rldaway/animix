@@ -68,7 +68,7 @@ export default function Navbar({ user }: NavbarProps) {
                   : "hover:text-[#ea580c] dark:hover:text-[#f97316]"
                   }`}
               >
-                Home
+                LOBI
                 <span
                   className={`absolute -bottom-1 left-0 h-[2px] w-full origin-left bg-[#ea580c] transition group-hover:scale-x-100 dark:bg-[#f97316] ${pathname === "/manga" ? "scale-x-100" : "scale-x-0"
                     }`}
@@ -81,7 +81,7 @@ export default function Navbar({ user }: NavbarProps) {
                   : "hover:text-[#ea580c] dark:hover:text-[#f97316]"
                   }`}
               >
-                Comic List
+                DAFTAR KOMIK
                 <span
                   className={`absolute -bottom-1 left-0 h-[2px] w-full origin-left bg-[#ea580c] transition group-hover:scale-x-100 dark:bg-[#f97316] ${pathname.startsWith("/manga/list") ? "scale-x-100" : "scale-x-0"
                     }`}
@@ -94,7 +94,7 @@ export default function Navbar({ user }: NavbarProps) {
                   : "hover:text-[#ea580c] dark:hover:text-[#f97316]"
                   }`}
               >
-                History
+                RIWAYAT
                 <span
                   className={`absolute -bottom-1 left-0 h-[2px] w-full origin-left bg-[#ea580c] transition group-hover:scale-x-100 dark:bg-[#f97316] ${pathname.startsWith("/manga/history") ? "scale-x-100" : "scale-x-0"
                     }`}
@@ -111,7 +111,7 @@ export default function Navbar({ user }: NavbarProps) {
                   : "hover:text-zinc-900 dark:hover:text-white"
                   }`}
               >
-                Home
+                LOBI
                 <span
                   className={`absolute -bottom-1 left-0 h-[2px] w-full origin-left bg-zinc-900 transition group-hover:scale-x-100 dark:bg-white ${pathname === "/" ? "scale-x-100" : "scale-x-0"
                     }`}
@@ -124,7 +124,7 @@ export default function Navbar({ user }: NavbarProps) {
                   : "hover:text-zinc-900 dark:hover:text-white"
                   }`}
               >
-                Anime List
+                DAFTAR ANIME
                 <span
                   className={`absolute -bottom-1 left-0 h-[2px] w-full origin-left bg-zinc-900 transition group-hover:scale-x-100 dark:bg-white ${pathname.startsWith("/animelist") ? "scale-x-100" : "scale-x-0"
                     }`}
@@ -137,7 +137,7 @@ export default function Navbar({ user }: NavbarProps) {
                   : "hover:text-zinc-900 dark:hover:text-white"
                   }`}
               >
-                History
+                RIWAYAT
                 <span
                   className={`absolute -bottom-1 left-0 h-[2px] w-full origin-left bg-zinc-900 transition group-hover:scale-x-100 dark:bg-white ${pathname.startsWith("/history") ? "scale-x-100" : "scale-x-0"
                     }`}
@@ -153,7 +153,7 @@ export default function Navbar({ user }: NavbarProps) {
           <input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder={pathname.startsWith("/manga") ? "Search comics..." : "Search anime..."}
+            placeholder={pathname.startsWith("/manga") ? "Cari komik..." : "Cari anime..."}
             className={`w-full px-4 py-2 text-sm transition-all duration-500 ease-in-out focus:outline-none ${isReadPage || isMangaMode
               ? "rounded-md border-2 border-[#9a3412] bg-white text-[#1a1510] placeholder:text-[#1a1510]/50 focus:border-[#ea580c] dark:border-[#c2410c] dark:bg-[#26160a] dark:text-[#fff0e0] dark:placeholder:text-[#fff0e0]/50"
               : "rounded-full border border-zinc-200 bg-white text-zinc-800 placeholder:text-zinc-400 focus:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100"
@@ -162,11 +162,11 @@ export default function Navbar({ user }: NavbarProps) {
           <button
             type="submit"
             className={`px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] transition-all duration-500 ease-in-out hover:-translate-y-[1px] active:translate-y-0 ${isReadPage || isMangaMode
-                ? "rounded-md border-2 border-[#9a3412] bg-[#ea580c] text-white hover:bg-[#c2410c] dark:border-[#c2410c] dark:bg-[#f97316] dark:hover:bg-[#ea580c]"
-                : "rounded-full border border-zinc-200 text-zinc-700 hover:border-zinc-400 dark:border-zinc-800 dark:text-zinc-200"
+              ? "rounded-md border-2 border-[#9a3412] bg-[#ea580c] text-white hover:bg-[#c2410c] dark:border-[#c2410c] dark:bg-[#f97316] dark:hover:bg-[#ea580c]"
+              : "rounded-full border border-zinc-200 text-zinc-700 hover:border-zinc-400 dark:border-zinc-800 dark:text-zinc-200"
               }`}
           >
-            Go
+            GAS
           </button>
         </form>
         <div className="flex items-center gap-3">
@@ -185,17 +185,17 @@ export default function Navbar({ user }: NavbarProps) {
                     {activeUser.name?.slice(0, 1) ?? "U"}
                   </div>
                 )}
-                <span className="max-w-[140px] truncate">{activeUser.name ?? "Signed in"}</span>
+                <span className="max-w-[140px] truncate">{activeUser.name ?? "Warga Aktif"}</span>
               </div>
               <button
                 type="button"
                 onClick={() => signOut()}
                 className={`px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] transition-all duration-500 ease-in-out hover:-translate-y-[1px] active:translate-y-0 ${isReadPage || isMangaMode
-                    ? "rounded-md border-2 border-[#9a3412] bg-[#ea580c] text-white hover:bg-[#c2410c] dark:border-[#c2410c] dark:bg-[#f97316] dark:hover:bg-[#ea580c]"
-                    : "rounded-full bg-zinc-900 text-white hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900"
+                  ? "rounded-md border-2 border-[#9a3412] bg-[#ea580c] text-white hover:bg-[#c2410c] dark:border-[#c2410c] dark:bg-[#f97316] dark:hover:bg-[#ea580c]"
+                  : "rounded-full bg-zinc-900 text-white hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900"
                   }`}
               >
-                Logout
+                KELUAR
               </button>
             </>
           ) : (
@@ -203,11 +203,11 @@ export default function Navbar({ user }: NavbarProps) {
               type="button"
               onClick={() => signIn()}
               className={`px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] transition-all duration-500 ease-in-out hover:-translate-y-[1px] active:translate-y-0 ${isReadPage || isMangaMode
-                  ? "rounded-md border-2 border-[#9a3412] bg-[#ea580c] text-white hover:bg-[#c2410c] dark:border-[#c2410c] dark:bg-[#f97316] dark:hover:bg-[#ea580c]"
-                  : "rounded-full bg-zinc-900 text-white hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900"
+                ? "rounded-md border-2 border-[#9a3412] bg-[#ea580c] text-white hover:bg-[#c2410c] dark:border-[#c2410c] dark:bg-[#f97316] dark:hover:bg-[#ea580c]"
+                : "rounded-full bg-zinc-900 text-white hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900"
                 }`}
             >
-              Login
+              MASUK
             </button>
           )}
         </div>

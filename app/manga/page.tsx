@@ -13,9 +13,9 @@ export default async function MangaPage() {
     ]);
 
     return (
-        <div className="manga-mode min-h-screen">
+        <div className="manga-mode min-h-screen flex flex-col">
             <Navbar user={session?.user ?? null} />
-            <main className="manga-main">
+            <main className="manga-main flex-1 w-full">
                 <div className="manga-hero">
                     <div className="manga-hero-content">
                         <h1 className="manga-hero-title">
@@ -23,7 +23,7 @@ export default async function MangaPage() {
                             <span className="manga-hero-title-sub">Collection</span>
                         </h1>
                         <p className="manga-hero-caption">
-                            Dive into thousands of comic titles. Read your favorites anytime.
+                            Baca ribuan judul komik favoritmu kapan saja.
                         </p>
                     </div>
                     <div className="manga-hero-decoration">
@@ -35,26 +35,25 @@ export default async function MangaPage() {
 
                 <div className="manga-content">
                     <MangaSectionInfinite
-                        title="Popular Comics"
-                        caption="Most followed titles right now"
+                        title="KOMIK POPULER"
+                        caption="Judul paling banyak diikuti saat ini"
                         initialMangas={popular}
                         initialPage={2}
                         fetchUrl="/api/manga-feed?type=popular"
-                        warning={popular.length === 0 ? "Unable to load popular comics" : null}
+                        warning={popular.length === 0 ? "Gagal memuat komik populer" : null}
                     />
 
                     <MangaSectionInfinite
-                        title="Latest Updates"
-                        caption="Recently updated chapters"
+                        title="UPDATE TERBARU"
+                        caption="Chapter yang baru saja rilis"
                         initialMangas={latest}
                         initialPage={2}
                         fetchUrl="/api/manga-feed?type=latest"
-                        warning={latest.length === 0 ? "Unable to load latest comics" : null}
+                        warning={latest.length === 0 ? "Gagal memuat komik terbaru" : null}
                     />
                 </div>
-
-                <Footer />
             </main>
+            <Footer variant="comic" />
         </div>
     );
 }

@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getChapterPages } from "@/app/libs/manga-api";
 import Link from "next/link";
+import { MangaLoader } from "@/app/components/FancyLoaders";
 
 type PageProps = {
     params: Promise<{ slug: string }>;
@@ -103,26 +104,14 @@ export default function MangaReaderPage({ params }: PageProps) {
     };
 
     if (loading) {
-        return (
-            <div className="manga-reader-loading">
-                <div className="loading-wrap">
-                    <div className="manga-loading-panel">
-                        <div className="manga-loading-border"></div>
-                        <div className="manga-loading-content">
-                            <div className="manga-loading-spinner"></div>
-                            <div className="loading-text">LOADING CHAPTER...</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
+        return <MangaLoader />;
     }
 
     return (
         <div className="manga-reader-comic">
             {/* Comic-Style Header */}
-            <div className="manga-reader-comic-header">
-                <div className="manga-reader-comic-header-panel">
+            <div className="manga-reader-comic-header animate-slide-down delay-200" style={{ animationFillMode: 'forwards' }}>
+                <div className="manga-reader-comic-header-panel hover-lift">
                     <button onClick={handleBack} className="manga-reader-comic-back">
                         <span className="manga-reader-comic-back-arrow"><i className="fa-solid fa-arrow-left"></i></span>
                         <span className="manga-reader-comic-back-text">BACK</span>
@@ -172,7 +161,8 @@ export default function MangaReaderPage({ params }: PageProps) {
                         <div
                             key={index}
                             ref={(el) => { pageRefs.current[index] = el; }}
-                            className="manga-reader-comic-page-wrapper"
+                            className="manga-reader-comic-page-wrapper animate-fade-in opacity-0"
+                            style={{ animationDelay: `${Math.min(index * 100, 800)}ms`, animationFillMode: 'forwards' }}
                         >
                             <div className="manga-reader-comic-page-panel">
                                 <div className="manga-reader-comic-page-border"></div>
@@ -210,8 +200,8 @@ export default function MangaReaderPage({ params }: PageProps) {
             </div>
 
             {/* Comic-Style Footer */}
-            <div className="manga-reader-comic-footer">
-                <div className="manga-reader-comic-footer-panel">
+            <div className="manga-reader-comic-footer animate-slide-up delay-300" style={{ animationFillMode: 'forwards' }}>
+                <div className="manga-reader-comic-footer-panel hover-lift">
                     <div className="manga-reader-comic-footer-border"></div>
                     <div className="manga-reader-comic-footer-content">
                         <div className="manga-reader-comic-footer-info">

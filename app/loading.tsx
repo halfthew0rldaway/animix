@@ -1,5 +1,9 @@
-import LoadingScreen from "./components/LoadingScreen";
+import { AnimeLoader } from "@/app/components/FancyLoaders";
 
 export default function Loading() {
-  return <LoadingScreen title="Loading" message="Preparing Animix..." />;
+  return (
+    <div className="flex h-screen w-full items-center justify-center bg-zinc-950">
+      <AnimeLoader title="LOADING ANIMIX..." />
+    </div>
+  );
 }

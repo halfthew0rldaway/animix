@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import Navbar from "../../components/Navbar";
 import { notifyRateLimit, updateRateLimitUsage } from "../../libs/rateLimitClient";
+import { AnimeLoader } from "@/app/components/FancyLoaders";
 
 const HISTORY_KEY = "juju-otaku-history";
 const SESSION_ANIME_KEY = "juju-otaku-current";
@@ -249,7 +250,7 @@ export default function WatchPage({
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
       <Navbar />
-      <main className="mx-auto flex w-full flex-col gap-8 px-4 py-10 sm:px-6 lg:px-10">
+      <main className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-8 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex flex-col gap-2">
             <p className="text-xs uppercase tracking-[0.35em] text-zinc-500 dark:text-zinc-400">
@@ -288,7 +289,7 @@ export default function WatchPage({
           </div>
         ) : null}
 
-        <div className="overflow-hidden rounded-3xl border border-zinc-200 bg-black shadow-xl dark:border-zinc-800">
+        <div className="overflow-hidden rounded-3xl border border-zinc-200 bg-black shadow-xl dark:border-zinc-800 relative z-10">
           {currentStream?.url ? (
             <iframe
               title={episodeData?.title ?? "Stream"}
@@ -297,8 +298,10 @@ export default function WatchPage({
               allowFullScreen
             />
           ) : (
-            <div className="flex aspect-video items-center justify-center text-sm text-zinc-400">
-              {loading ? "Loading stream..." : "Stream tidak tersedia"}
+            <div className="flex aspect-video w-full items-center justify-center bg-black">
+              {loading ? <AnimeLoader /> : (
+                <div className="text-sm text-zinc-500">Stream unavailable</div>
+              )}
             </div>
           )}
         </div>
@@ -316,11 +319,10 @@ export default function WatchPage({
                 key={`${stream.url}-${index}`}
                 type="button"
                 onClick={() => setCurrentStream(stream)}
-                className={`rounded-full border px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] transition hover:-translate-y-[1px] active:translate-y-0 ${
-                  currentStream?.url === stream.url
-                    ? "border-zinc-900 bg-zinc-900 text-white dark:border-white dark:bg-white dark:text-zinc-900"
-                    : "border-zinc-200 text-zinc-500 hover:border-zinc-400 dark:border-zinc-800 dark:text-zinc-300"
-                }`}
+                className={`rounded-full border px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] transition hover:-translate-y-[1px] active:translate-y-0 ${currentStream?.url === stream.url
+                  ? "border-zinc-900 bg-zinc-900 text-white dark:border-white dark:bg-white dark:text-zinc-900"
+                  : "border-zinc-200 text-zinc-500 hover:border-zinc-400 dark:border-zinc-800 dark:text-zinc-300"
+                  }`}
               >
                 {stream.name ?? `Server ${index + 1}`}
               </button>

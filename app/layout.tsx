@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Cinzel, Manrope, JetBrains_Mono, Space_Mono } from "next/font/google";
+import { Outfit, Manrope, JetBrains_Mono, Space_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import NextAuthProvider from "./components/NextAuthProvider";
 import RateLimitToast from "./components/RateLimitToast";
 import RateLimitWidget from "./components/RateLimitWidget";
 
-const displayFont = Cinzel({
+const displayFont = Outfit({
   variable: "--font-display",
   subsets: ["latin"],
 });

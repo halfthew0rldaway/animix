@@ -21,7 +21,7 @@ export default function FirstVisitModal() {
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center px-4 bg-zinc-950/90 backdrop-blur-sm">
-            <div className="relative w-full max-w-3xl bg-white text-black overflow-hidden shadow-[16px_16px_0px_0px_#1a1a1a] border-4 border-black animate-scale-in">
+            <div className="relative w-full max-w-2xl bg-white text-black overflow-hidden shadow-[8px_8px_0px_0px_#1a1a1a] md:shadow-[16px_16px_0px_0px_#1a1a1a] border-4 border-black animate-scale-in">
 
                 {/* Header Strip */}
                 <div className="bg-black text-white px-8 py-5 flex items-center justify-between border-b-4 border-black">
@@ -35,7 +35,7 @@ export default function FirstVisitModal() {
                     </div>
                 </div>
 
-                <div className="p-8 md:p-12 flex flex-col gap-8 relative">
+                <div className="p-6 md:p-10 flex flex-col gap-6 relative">
                     {/* Background Pattern */}
                     <div className="absolute top-0 right-0 w-64 h-64 opacity-5 pointer-events-none">
                         <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -47,11 +47,11 @@ export default function FirstVisitModal() {
                     </div>
 
                     <div className="relative z-10">
-                        <h3 className="text-4xl md:text-6xl font-black leading-[0.9] tracking-tighter uppercase mb-2">
+                        <h3 className="text-3xl md:text-5xl font-black leading-[0.9] tracking-tighter uppercase mb-2">
                             SELAMAT DATANG <br />
                             DI <span className="text-transparent bg-clip-text bg-gradient-to-r from-black via-zinc-800 to-zinc-500">ANIMIX</span>.
                         </h3>
-                        <div className="h-2 w-32 bg-green-500 mt-4"></div>
+                        <div className="h-2 w-24 md:w-32 bg-green-500 mt-4"></div>
                     </div>
 
                     <div className="text-lg md:text-xl font-bold space-y-6 text-zinc-800">

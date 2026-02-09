@@ -46,7 +46,7 @@ export default function ModeToggle() {
                     disabled={isTransitioning}
                 >
                     <span className="mode-icon"><i className="fa-solid fa-book-open"></i></span>
-                    <span className="mode-label">Read</span>
+                    <span className="mode-label">Comic</span>
                 </button>
                 <div className={`mode-toggle-slider ${mode === "manga" ? "right" : "left"}`} />
             </div>

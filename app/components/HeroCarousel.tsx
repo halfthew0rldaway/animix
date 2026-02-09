@@ -58,7 +58,7 @@ export default function HeroCarousel({ items }: HeroCarouselProps) {
     return (
       <section className="rounded-3xl border border-zinc-200 bg-zinc-100 p-8 dark:border-zinc-800 dark:bg-zinc-900">
         <p className="text-sm text-zinc-500 dark:text-zinc-400">
-          No hero data yet.
+          Belum ada data populer.
         </p>
       </section>
     );
@@ -175,7 +175,7 @@ export default function HeroCarousel({ items }: HeroCarouselProps) {
                 </div>
               </button>
             )) : (
-              <p className="text-xs text-zinc-500 col-span-2 text-center py-10">Loading suggestions...</p>
+              <p className="text-xs text-zinc-500 col-span-2 text-center py-10">Memuat rekomendasi...</p>
             )}
           </div>
         </div>

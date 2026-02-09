@@ -30,15 +30,16 @@ export default async function MangaDetailPage({ params, searchParams }: PageProp
     const coverUrl = coverFromCard || manga.cover;
 
     return (
-        <div className="manga-mode min-h-screen">
+        <div className="manga-mode min-h-screen flex flex-col">
             <Navbar user={session?.user ?? null} />
-            <main className="manga-detail-main">
+            <main className="manga-detail-main flex-1 w-full">
                 <div className="manga-detail-header">
                     <div className="manga-detail-cover-wrapper">
                         <MangaCover
                             src={coverUrl}
                             alt={manga.title}
                             className="manga-detail-cover"
+                            priority
                         />
                         <div className="manga-detail-cover-shadow" />
                     </div>
@@ -49,13 +50,13 @@ export default async function MangaDetailPage({ params, searchParams }: PageProp
                         <div className="manga-detail-meta">
                             {manga.author && (
                                 <div className="manga-detail-meta-item">
-                                    <span className="manga-detail-meta-label">Author:</span>
+                                    <span className="manga-detail-meta-label">Penulis:</span>
                                     <span className="manga-detail-meta-value">{manga.author}</span>
                                 </div>
                             )}
                             {manga.type && (
                                 <div className="manga-detail-meta-item">
-                                    <span className="manga-detail-meta-label">Type:</span>
+                                    <span className="manga-detail-meta-label">Tipe:</span>
                                     <span className="manga-detail-meta-value">{manga.type}</span>
                                 </div>
                             )}
@@ -67,7 +68,7 @@ export default async function MangaDetailPage({ params, searchParams }: PageProp
                             )}
                             {manga.rating && (
                                 <div className="manga-detail-meta-item">
-                                    <span className="manga-detail-meta-label">Rating:</span>
+                                    <span className="manga-detail-meta-label">Penilaian:</span>
                                     <span className="manga-detail-meta-value">{manga.rating}</span>
                                 </div>
                             )}
@@ -91,7 +92,7 @@ export default async function MangaDetailPage({ params, searchParams }: PageProp
 
                 <div className="manga-chapters-section">
                     <h2 className="manga-chapters-title">
-                        <span>Chapters</span>
+                        <span>Daftar Bab</span>
                         <div className="manga-chapters-title-accent" />
                     </h2>
 
@@ -104,7 +105,7 @@ export default async function MangaDetailPage({ params, searchParams }: PageProp
                                     className="manga-chapter-item"
                                 >
                                     <div className="manga-chapter-number">
-                                        Ch. {chapter.chapter}
+                                        Bab {chapter.chapter}
                                     </div>
                                     <div className="manga-chapter-info">
                                         <div className="manga-chapter-title">{chapter.title}</div>
@@ -120,13 +121,12 @@ export default async function MangaDetailPage({ params, searchParams }: PageProp
                         </div>
                     ) : (
                         <div className="manga-chapters-empty">
-                            <p>No chapters available</p>
+                            <p>Tidak ada bab tersedia</p>
                         </div>
                     )}
                 </div>
-
-                <Footer />
             </main>
+            <Footer variant="comic" />
         </div>
     );
 }

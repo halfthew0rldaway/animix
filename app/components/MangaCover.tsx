@@ -6,6 +6,7 @@ type MangaCoverProps = {
     src: string;
     alt: string;
     className?: string;
+    priority?: boolean;
 };
 
 const isValidImageUrl = (url: string) => {
@@ -21,7 +22,7 @@ const isValidImageUrl = (url: string) => {
     return true;
 };
 
-export default function MangaCover({ src, alt, className = "" }: MangaCoverProps) {
+export default function MangaCover({ src, alt, className = "", priority = false }: MangaCoverProps) {
     const [imgSrc, setImgSrc] = useState(() => {
         if (!isValidImageUrl(src)) {
             console.warn(`[MangaCover] Invalid initial src for ${alt}:`, src);
@@ -101,7 +102,8 @@ export default function MangaCover({ src, alt, className = "" }: MangaCoverProps
             alt={alt}
             className={className}
             onError={handleError}
-            loading="lazy"
+            loading={priority ? "eager" : "lazy"}
+            {...(priority ? { fetchPriority: "high" } : {})}
         />
     );
 }

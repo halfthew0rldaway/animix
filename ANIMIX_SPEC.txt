@@ -1,0 +1,114 @@
+# Animix - Project Specification
+
+## 1. Project Overview
+**Animix** is a high-performance, modern web application for streaming anime and reading manga. It features a premium, "Neobrutalist" dark-themed UI, focusing on speed, aesthetics, and user experience. The platform aggregates content from various sources, providing a unified interface for entertainment.
+
+## 2. Technology Stack
+
+### Core Framework
+*   **Framework**: Next.js 15 (App Router Architecture)
+    *   *Why*: Server Components for performance (SEO), Client Components for interactivity.
+*   **Language**: TypeScript (Strict Mode)
+    *   *Why*: Type safety, better developer experience, fewer runtime errors.
+*   **Runtime**: Node.js (Vercel Edge/Serverless compatible).
+
+### Styling & UI
+*   **CSS Engine**: Tailwind CSS v4
+    *   *Configuration*: Zero-runtime styles, CSS variables for theming (Manga/Anime modes).
+    *   *Aesthetic*: Custom Neobrutalism (Bold typography, High contrast, Vibrant accents).
+*   **Icons**: FontAwesome & Custom SVG Icons.
+*   **Fonts**: Google Fonts (Inter/Roboto implied, plus custom Display fonts).
+*   **Animation**: CSS Keyframes (Fade-in, Slide-up) & Tailwind utilities.
+
+### State & Authentication
+*   **Auth**: NextAuth.js (v5)
+    *   *Providers*: Google, GitHub (Configurable).
+    *   *Session*: JWT-based stateless session.
+*   **State Management**: React Hooks (`useState`, `useReducer`, `useContext`) + Server State (via Next.js Cache).
+
+### Database & Backend
+*   **Database Integration**: Optional/Hybrid.
+    *   *Primary*: SQLite/PostgreSQL (via Prisma ORM) for User History & Bookmarks.
+    *   *Toggle*: `NEXT_PUBLIC_USE_DATABASE` flag allows running without a DB (Local Storage fallback).
+*   **API Architecture**: BFF (Backend-for-Frontend).
+    *   Next.js API Routes (`app/api/*`) proxy requests to external providers to secure keys and handle CORS.
+
+## 3. External APIs & Data Sources
+
+### Anime Source
+*   **Provider**: Consumet API (Self-Hosted Recommended).
+*   **Upstream Sources**:
+    *   **Gogoanime**: Primary source for streaming links and episode lists.
+    *   **Anilist**: Metadata provider (Synopses, Characters, Trending data).
+*   **Data Flow**: `Client` -> `Next.js API Proxy` -> `Consumet` -> `Upstream`.
+
+### Manga Source
+*   **Provider**: Custom Scraper / Consumet Adapters.
+*   **Sources**: `MangaBat`, `Komiku` (Indonesian sources prioritized).
+*   **Features**: Popular Feed, Latest Updates, Search, Chapter Images.
+
+## 4. Key Features & Modules
+
+### A. Core UI (App Shell)
+*   **Navigation**: Responsive Sticky Navbar using standard routing.
+*   **Theming**: Global Dark Mode (Anime) vs. Cream/Paper Mode (Manga/Comic).
+*   **Security**: Client-side & Server-side Rate Limiting (`RateLimitWidget`) to prevent API abuse.
+
+### B. Anime Streaming Module
+*   **Home Page**:
+    *   **Hero Carousel**: Auto-playing slider with "Priority Loading" (LCP optimized).
+    *   **Recent Release**: Grid layout of latest episodes.
+*   **Watch Page**:
+    *   **Player**: Custom Frame / Video Player integration.
+    *   **Server Selector**: Switch between streaming mirrors.
+    *   **Navigation**: Prev/Next Episode buttons.
+
+### C. Manga Reader Module
+*   **Library**: Infinite Scroll listing (A-Z Filter).
+*   **Detail Page**:
+    *   Rich metadata (Author, Status, Genres).
+    *   Chapter List with fast navigation.
+*   **Reader Interface**:
+    *   **Vertical Scroll**: For Webtoon/Long-strip support.
+    *   **Image Optimization**: Lazy loading for off-screen images, Eager loading for current viewport.
+    *   **Comic Footer**: Unique sticky footer matching the comic aesthetic.
+
+### D. Localization
+*   **Language**: Indonesian (Bahasa Indonesia).
+*   **Scope**: Full UI translation (Buttons, Warnings, Errors, Metadata labels).
+*   **Tone**: Casual, Professional, Non-Cringe (Playful but clear).
+
+## 5. Directory Structure
+```
+animix/
+├── app/
+│   ├── api/            # Server-side API Routes (Proxies)
+│   ├── components/     # Reusable UI Components (Navbar, Footer, Cards)
+│   ├── libs/           # Utility functions (API fetchers, Rate Limiters)
+│   ├── manga/          # Manga-specific routes & layout
+│   ├── detail/         # Anime Detail pages
+│   ├── watch/          # Stream Player pages
+│   ├── layout.tsx      # Root Layout (Providers, Global Modal)
+│   └── page.tsx        # Home Page
+├── public/             # Static Assets (Images, SVGs)
+└── ...config files
+```
+
+## 6. Performance & Optimization
+*   **LCP (Largest Contentful Paint)**:
+    *   Hero Images & Covers use `priority={true}` / `loading="eager"`.
+    *   Resource Hints (`fetchPriority`) applied to critical assets.
+*   **CLS (Cumulative Layout Shift)**:
+    *   Skeleton Loaders (`FancyLoaders`) used during data fetching.
+    *   Fixed-aspect-ratio containers for images.
+*   **SEO**:
+    *   Server-Side Rendering (SSR) for metadata.
+    *   Dynamic `title` and `description` meta tags for every page.
+
+## 7. Deployment
+*   **Platform**: Vercel (Recommended).
+*   **Build Command**: `next build`.
+*   **Env Variables**:
+    *   `NEXT_PUBLIC_API_URL`: URL to Consumet API.
+    *   `NEXTAUTH_SECRET`: Session encryption key.
+    *   `DATABASE_URL`: Connection string (if DB used).

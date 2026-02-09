@@ -322,9 +322,17 @@ a {
 
 /* Mode Toggle */
 .mode-toggle-wrapper {
-  display: flex;
+  display: none;
+  /* Hidden on mobile */
   align-items: center;
   margin-left: 1rem;
+}
+
+@media (min-width: 768px) {
+  .mode-toggle-wrapper {
+    display: flex;
+    /* Show on desktop */
+  }
 }
 
 .mode-toggle {
@@ -1318,7 +1326,7 @@ a {
 
 .manga-reader-comic-back-arrow,
 .manga-reader-comic-home-icon {
-  font-size: 1.125rem;
+  font-size: 1rem;
 }
 
 .manga-reader-comic-title-panel {
@@ -1875,4 +1883,41 @@ a {
 .hover-lift:hover {
   transform: translateY(-4px);
   box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 640px) {
+
+  .manga-reader-comic-back,
+  .manga-reader-comic-home {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.65rem;
+    gap: 0.25rem;
+  }
+
+  .manga-reader-comic-back-arrow,
+  .manga-reader-comic-home-icon {
+    font-size: 0.85rem;
+  }
+
+  .manga-reader-comic-title-content {
+    padding: 0.25rem 0.5rem;
+  }
+
+  .manga-reader-comic-manga-title {
+    font-size: 0.75rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+    margin: 0 auto;
+  }
+
+  .manga-reader-comic-chapter-title {
+    font-size: 0.65rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+    margin: 0.1rem auto 0;
+  }
 }

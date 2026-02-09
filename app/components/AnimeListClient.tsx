@@ -104,17 +104,16 @@ export default function AnimeListClient({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap gap-2">
+      <div className="flex gap-2 overflow-x-auto pb-2 sm:flex-wrap sm:overflow-visible sm:pb-0 no-scrollbar items-center">
         {LETTERS.map((item) => (
           <button
             key={item}
             type="button"
             onClick={() => setLetter(item)}
-            className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.15em] transition hover:-translate-y-[1px] active:translate-y-0 ${
-              item === letter
-                ? "border-zinc-900 bg-zinc-900 text-white dark:border-white dark:bg-white dark:text-zinc-900"
-                : "border-zinc-200 text-zinc-500 hover:border-zinc-400 dark:border-zinc-800 dark:text-zinc-300"
-            }`}
+            className={`min-w-[40px] flex-shrink-0 rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.15em] transition hover:-translate-y-[1px] active:translate-y-0 ${item === letter
+                ? "border-zinc-900 bg-zinc-900 text-white dark:border-white dark:bg-white dark:text-zinc-900 shadow-md transform scale-105"
+                : "border-zinc-200 text-zinc-500 hover:border-zinc-400 dark:border-zinc-800 dark:text-zinc-300 bg-white dark:bg-zinc-900"
+              }`}
           >
             {item}
           </button>

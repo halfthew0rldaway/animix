@@ -122,7 +122,7 @@ export default async function DetailPage({
       {error ? (
         <div className="flex min-h-screen items-center justify-center p-4">
           <div className="rounded-2xl border border-rose-500/50 bg-rose-500/10 p-8 text-center backdrop-blur-sm">
-            <p className="text-rose-400">Details are unavailable. Please refresh.</p>
+            <p className="text-rose-400">Detail tidak tersedia. Silakan muat ulang.</p>
           </div>
         </div>
       ) : null}
@@ -137,6 +137,8 @@ export default async function DetailPage({
                   src={banner}
                   alt={title}
                   className="h-full w-full object-cover object-top"
+                  loading="eager"
+                  fetchPriority="high"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/60 to-transparent" />
                 <div className="absolute inset-0 bg-gradient-to-r from-zinc-950/95 via-zinc-950/40 to-transparent" />
@@ -162,73 +164,62 @@ export default async function DetailPage({
                 </h1>
 
                 {/* Genre badges */}
-                <div className="flex flex-wrap gap-2.5 mb-8">
+                {/* Genre badges */}
+                <div className="flex flex-wrap gap-2 mb-8">
                   {genres.slice(0, 5).map((genre) => (
                     <span
                       key={genre.slug}
-                      className="px-4 py-2 bg-zinc-800/90 backdrop-blur-sm border border-zinc-700/50 rounded-xl text-xs font-bold uppercase tracking-wider text-zinc-200 shadow-lg"
+                      className="px-3 py-1 bg-zinc-800/80 backdrop-blur-sm border border-zinc-700/50 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider text-zinc-300 shadow-sm"
                     >
                       {genre.name}
                     </span>
                   ))}
                 </div>
 
-                {/* Action Bar - FULL WIDTH SOLID ROW */}
-                <div className="flex flex-row flex-nowrap items-stretch gap-4 w-full animate-slide-up delay-200 opacity-0" style={{ animationFillMode: 'forwards' }}>
-                  {/* Play Button - Solid Green */}
+                {/* Action Bar & Stats */}
+                <div className="flex flex-col gap-4 w-full animate-slide-up delay-200" style={{ animationFillMode: 'forwards' }}>
+
+                  {/* Watch Button - Full Width on Mobile, Auto on Desktop */}
                   {watchHref ? (
                     <Link
                       href={watchHref}
-                      className="group relative flex flex-col items-center justify-center bg-green-600 hover:bg-green-500 rounded-2xl px-10 py-4 h-24 min-w-[180px] flex-shrink-0 transition-all hover:scale-105 shadow-xl shadow-green-900/20"
+                      className="group relative flex items-center justify-center gap-3 bg-green-600 hover:bg-green-500 rounded-xl px-6 py-4 w-full md:w-auto md:min-w-[200px] transition-all hover:scale-[1.02] shadow-xl shadow-green-900/20"
                     >
-                      <svg className="w-10 h-10 text-white mb-1" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
                       </svg>
-                      <span className="text-xs font-black text-white uppercase tracking-wider font-[family-name:var(--font-display)]">NONTON</span>
+                      <span className="text-sm font-black text-white uppercase tracking-wider font-[family-name:var(--font-display)]">MULAI NONTON</span>
                     </Link>
                   ) : null}
 
-                  {/* Status Card - Solid Dark */}
-                  <div className="relative flex flex-row items-center bg-zinc-950 border border-zinc-800 rounded-2xl flex-1 min-w-[140px] h-24 overflow-hidden group hover:border-zinc-700 transition-colors">
-                    <div className="h-full w-12 flex items-center justify-center bg-zinc-900 border-r border-zinc-800 group-hover:bg-zinc-800 transition-colors">
-                      <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-bold [writing-mode:vertical-lr] rotate-180 whitespace-nowrap font-[family-name:var(--font-display)]">STATUS</p>
+                  {/* Stats Grid */}
+                  <div className="grid grid-cols-2 md:flex md:flex-row gap-3 w-full">
+                    {/* Status Card */}
+                    <div className="bg-zinc-950/80 border border-zinc-800 rounded-xl p-3 flex flex-col items-center justify-center gap-1 flex-1 min-w-[100px]">
+                      <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold">STATUS</span>
+                      <span className="text-sm font-black text-white tracking-wide">{status || 'UNKNOWN'}</span>
                     </div>
-                    <div className="flex-1 flex items-center justify-center px-4">
-                      <p className="text-xl font-black text-white tracking-tight text-center font-[family-name:var(--font-display)] tracking-wider decoration-slice">{status || 'FINISHED'}</p>
-                    </div>
-                  </div>
 
-                  {/* Episodes Card - Solid Dark */}
-                  <div className="relative flex flex-row items-center bg-zinc-950 border border-zinc-800 rounded-2xl flex-1 min-w-[120px] h-24 overflow-hidden group hover:border-zinc-700 transition-colors">
-                    <div className="h-full w-12 flex items-center justify-center bg-zinc-900 border-r border-zinc-800 group-hover:bg-zinc-800 transition-colors">
-                      <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-bold [writing-mode:vertical-lr] rotate-180 whitespace-nowrap font-[family-name:var(--font-display)]">EPS</p>
+                    {/* Episodes Card */}
+                    <div className="bg-zinc-900/80 border border-zinc-800 rounded-xl p-3 flex flex-col items-center justify-center gap-1 flex-1 min-w-[100px]">
+                      <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold">EPISODE</span>
+                      <span className="text-sm font-black text-white tracking-wide">{totalEpisodes || '?'}</span>
                     </div>
-                    <div className="flex-1 flex items-center justify-center px-4">
-                      <p className="text-3xl font-black text-white tracking-tight font-[family-name:var(--font-display)] tracking-wider">{totalEpisodes || '130'}</p>
-                    </div>
-                  </div>
 
-                  {/* Release Card - Solid Dark */}
-                  <div className="relative flex flex-row items-center bg-zinc-950 border border-zinc-800 rounded-2xl flex-1 min-w-[140px] h-24 overflow-hidden group hover:border-zinc-700 transition-colors">
-                    <div className="h-full w-12 flex items-center justify-center bg-zinc-900 border-r border-zinc-800 group-hover:bg-zinc-800 transition-colors">
-                      <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-bold [writing-mode:vertical-lr] rotate-180 whitespace-nowrap font-[family-name:var(--font-display)]">TAYANG</p>
+                    {/* Release Card */}
+                    <div className="bg-zinc-900/80 border border-zinc-800 rounded-xl p-3 flex flex-col items-center justify-center gap-1 flex-1 min-w-[100px]">
+                      <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold">RILIS</span>
+                      <span className="text-sm font-black text-white tracking-wide text-center leading-tight">{detail.aired || '-'}</span>
                     </div>
-                    <div className="flex-1 flex items-center justify-center px-4">
-                      <p className="text-sm font-black text-white text-center leading-tight tracking-tight font-[family-name:var(--font-display)] tracking-wider">{detail.aired || 'Jul 5, 2015'}</p>
-                    </div>
-                  </div>
 
-                  {/* Duration Card - Solid Dark */}
-                  {detail.duration ? (
-                    <div className="relative flex flex-row items-center bg-zinc-950 border border-zinc-800 rounded-2xl flex-1 min-w-[120px] h-24 overflow-hidden group hover:border-zinc-700 transition-colors">
-                      <div className="h-full w-12 flex items-center justify-center bg-zinc-900 border-r border-zinc-800 group-hover:bg-zinc-800 transition-colors">
-                        <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-bold [writing-mode:vertical-lr] rotate-180 whitespace-nowrap font-[family-name:var(--font-display)]">DURASI</p>
+                    {/* Duration Card */}
+                    {detail.duration ? (
+                      <div className="bg-zinc-900/80 border border-zinc-800 rounded-xl p-3 flex flex-col items-center justify-center gap-1 flex-1 min-w-[100px]">
+                        <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold">DURASI</span>
+                        <span className="text-sm font-black text-white tracking-wide">{detail.duration}</span>
                       </div>
-                      <div className="flex-1 flex items-center justify-center px-4">
-                        <p className="text-sm font-black text-white tracking-tight font-[family-name:var(--font-display)] tracking-wider">{detail.duration}</p>
-                      </div>
-                    </div>
-                  ) : null}
+                    ) : null}
+                  </div>
                 </div>
               </div>
             </div>
@@ -241,10 +232,11 @@ export default async function DetailPage({
                 {/* Left Column - Flex to match cover height */}
                 <div className="flex flex-col gap-12">
                   {/* Synopsis Card - Expands to match cover height */}
-                  <div className="flex-1 bg-zinc-900/60 backdrop-blur-sm border-2 border-zinc-800 rounded-2xl p-12 shadow-2xl flex flex-col animate-slide-up delay-300 opacity-0" style={{ animationFillMode: 'forwards' }}>
-                    <div className="flex items-center gap-4 mb-8">
-                      <span className="w-2 h-10 bg-green-500 rounded-full shadow-lg shadow-green-500/50"></span>
-                      <h2 className="text-xl font-black text-zinc-300 uppercase tracking-widest font-[family-name:var(--font-display)]">SINOPSIS</h2>
+                  {/* Synopsis Card - Expands to match cover height */}
+                  <div className="flex-1 bg-zinc-900/60 backdrop-blur-sm border-2 border-zinc-800 rounded-2xl p-6 md:p-12 shadow-2xl flex flex-col animate-slide-up delay-300 opacity-0" style={{ animationFillMode: 'forwards' }}>
+                    <div className="flex items-center gap-4 mb-6">
+                      <span className="w-1.5 h-8 md:w-2 md:h-10 bg-green-500 rounded-full shadow-lg shadow-green-500/50"></span>
+                      <h2 className="text-lg md:text-xl font-black text-zinc-300 uppercase tracking-widest font-[family-name:var(--font-display)]">SINOPSIS</h2>
                     </div>
                     {synopsis ? (
                       <div className="max-w-4xl">
@@ -259,10 +251,10 @@ export default async function DetailPage({
 
                   {/* Episodes Section */}
                   {detail?.episodes && detail.episodes.length > 0 ? (
-                    <div className="bg-zinc-900/60 backdrop-blur-sm border-2 border-zinc-800 rounded-2xl p-12 shadow-2xl animate-slide-up delay-500 opacity-0" style={{ animationFillMode: 'forwards' }}>
-                      <div className="flex items-center gap-4 mb-8">
-                        <span className="w-2 h-10 bg-green-500 rounded-full shadow-lg shadow-green-500/50"></span>
-                        <h2 className="text-xl font-black text-zinc-300 uppercase tracking-widest font-[family-name:var(--font-display)]">DAFTAR EPISODE</h2>
+                    <div className="bg-zinc-900/60 backdrop-blur-sm border-2 border-zinc-800 rounded-2xl p-6 md:p-12 shadow-2xl animate-slide-up delay-500 opacity-0" style={{ animationFillMode: 'forwards' }}>
+                      <div className="flex items-center gap-4 mb-6">
+                        <span className="w-1.5 h-8 md:w-2 md:h-10 bg-green-500 rounded-full shadow-lg shadow-green-500/50"></span>
+                        <h2 className="text-lg md:text-xl font-black text-zinc-300 uppercase tracking-widest font-[family-name:var(--font-display)]">DAFTAR EPISODE</h2>
                       </div>
                       <div className="grid grid-cols-5 sm:grid-cols-7 md:grid-cols-9 lg:grid-cols-11 xl:grid-cols-13 gap-3">
                         {detail.episodes.map((episode, idx) => (
@@ -301,7 +293,7 @@ export default async function DetailPage({
                   <div className="bg-zinc-900/60 backdrop-blur-sm border-2 border-zinc-800 rounded-2xl p-10 shadow-2xl space-y-6">
                     <div className="flex items-center gap-4">
                       <span className="w-2 h-10 bg-green-500 rounded-full shadow-lg shadow-green-500/50"></span>
-                      <h3 className="text-xl font-black text-zinc-300 uppercase tracking-widest font-[family-name:var(--font-display)]">INFORMATION</h3>
+                      <h3 className="text-xl font-black text-zinc-300 uppercase tracking-widest font-[family-name:var(--font-display)]">INFORMASI</h3>
                     </div>
                     <div className="space-y-5 text-sm">
                       {detail.studio ? (
@@ -312,13 +304,13 @@ export default async function DetailPage({
                       ) : null}
                       {season ? (
                         <div className="flex justify-between items-center py-4 border-b-2 border-zinc-800">
-                          <span className="text-zinc-500 font-bold uppercase tracking-widest text-xs font-[family-name:var(--font-display)]">SEASON</span>
+                          <span className="text-zinc-500 font-bold uppercase tracking-widest text-xs font-[family-name:var(--font-display)]">MUSIM</span>
                           <span className="text-zinc-100 font-black text-base font-[family-name:var(--font-display)] tracking-wide text-right">{season}</span>
                         </div>
                       ) : null}
                       {detail.author ? (
                         <div className="flex justify-between items-center py-4 border-b-2 border-zinc-800">
-                          <span className="text-zinc-500 font-bold uppercase tracking-widest text-xs font-[family-name:var(--font-display)]">AUTHOR</span>
+                          <span className="text-zinc-500 font-bold uppercase tracking-widest text-xs font-[family-name:var(--font-display)]">PENULIS</span>
                           <span className="text-zinc-100 font-black text-base font-[family-name:var(--font-display)] tracking-wide text-right">{detail.author}</span>
                         </div>
                       ) : null}
@@ -346,7 +338,7 @@ export default async function DetailPage({
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                         </svg>
-                        <span className="drop-shadow-lg text-sm">Download Batch</span>
+                        <span className="drop-shadow-lg text-sm">UNDUH BATCH</span>
                       </span>
                     </Link>
                   ) : null}
@@ -357,7 +349,7 @@ export default async function DetailPage({
         </main>
       ) : (
         <div className="flex min-h-screen items-center justify-center p-4">
-          <p className="text-zinc-500">Detail not found.</p>
+          <p className="text-zinc-500">Detail tidak ditemukan.</p>
         </div>
       )}
     </div>

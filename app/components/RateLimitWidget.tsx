@@ -132,7 +132,7 @@ export default function RateLimitWidget() {
       <button
         type="button"
         onClick={toggleHidden}
-        className="fixed bottom-20 right-5 md:bottom-5 z-50 rounded-full border border-white/10 bg-zinc-950/80 px-3 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(0,0,0,0.3)] backdrop-blur"
+        className="hidden md:block fixed bottom-5 right-5 z-50 rounded-full border border-white/10 bg-zinc-950/80 px-3 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(0,0,0,0.3)] backdrop-blur"
       >
         Rate
       </button>
@@ -140,7 +140,7 @@ export default function RateLimitWidget() {
   }
 
   return (
-    <div className="fixed bottom-20 right-5 md:bottom-5 z-50 flex items-center gap-3 rounded-full border border-white/10 bg-zinc-950/85 px-3 py-2 text-white shadow-[0_18px_50px_rgba(0,0,0,0.35)] backdrop-blur">
+    <div className="hidden md:flex fixed bottom-5 right-5 z-50 items-center gap-3 rounded-full border border-white/10 bg-zinc-950/85 px-3 py-2 text-white shadow-[0_18px_50px_rgba(0,0,0,0.35)] backdrop-blur">
       <div
         className={`flex h-11 w-11 items-center justify-center rounded-full ${isHot ? "animate-pulse" : ""
           }`}

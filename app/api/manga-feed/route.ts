@@ -19,37 +19,6 @@ const normalize = (value: string) =>
     .replace(/\s+/g, " ")
     .trim();
 
-const normalizeTitleKey = (value: string) => {
-  const stop = new Set([
-    "the",
-    "a",
-    "an",
-    "of",
-    "and",
-    "to",
-    "in",
-    "no",
-    "ni",
-    "ga",
-    "wo",
-    "wa",
-    "de",
-    "la",
-    "le",
-    "el",
-  ]);
-  return normalize(value)
-    .split(" ")
-    .filter((token) => token && !stop.has(token))
-    .join(" ");
-};
-
-
-const tokenizeTitle = (value: string) => {
-  const key = normalizeTitleKey(value);
-  return key ? key.split(" ").filter(Boolean) : [];
-};
-
 const extractSize = (url: string) => {
   const match = url.match(/(\d{2,4})x(\d{2,4})/);
   if (!match) return null;
@@ -249,10 +218,11 @@ export async function GET(req: NextRequest) {
   const unlimitedRes = await safeFetchJson<MangaApiResponse>(
     `${urlBase}/unlimited`,
     { next: { revalidate: 3600 } },
-    { cacheKey: "manga-unlimited", ttlMs: 1000 * 60 * 60, errorTtlMs: 1000 * 60 }
+    { cacheKey: "manga-unlimited", ttlMs: 1000 * 60 * 60, errorTtlMs: 1000 * 5 }
   );
 
   if (!unlimitedRes.ok) {
+    console.error("[MangaFeed] Upstream error:", unlimitedRes.error);
     return Response.json({ error: unlimitedRes.error }, { status: 502 });
   }
 

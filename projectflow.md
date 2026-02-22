@@ -1,4 +1,4 @@
-# FROM Juju Otaku 2.0 - Project Flow and Integration Notes
+# Juju Otaku 2.0 - Project Flow and Integration Notes
 
 Dokumen ini merangkum alur utama aplikasi, terutama Home Page, Streaming, dan API. Tujuannya supaya kamu bisa replikasi flow ke project Next.js lain dengan detail yang jelas.
 
@@ -180,10 +180,9 @@ GITHUB_CLIENT_SECRET=your_github_secret
 - Detail: `src/app/detail/[slug]/page.jsx`
 - Search: `src/app/search/[slug]/page.jsx`
 - Anime List: `src/app/animelist/page.jsx`, `src/app/components/AnimeListClient.jsx`
-- Download: `src/app/download/[slug]/page.jsx`
+- Download: `src/app/download/[slug]/page.jsx`  
 - NextAuth: `src/app/api/auth/[...nextauth]/route.js`
 - History API: `src/app/api/history/route.js`
 - Prisma client: `src/app/libs/prisma.js`
 - Prisma schema: `prisma/schema.prisma`
 - Layout & Provider: `src/app/layout.jsx`, `src/app/components/NextAuthProvider.jsx`
-

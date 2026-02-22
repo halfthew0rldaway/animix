@@ -25,10 +25,8 @@ const isValidImageUrl = (url: string) => {
 export default function MangaCover({ src, alt, className = "", priority = false }: MangaCoverProps) {
     const [imgSrc, setImgSrc] = useState(() => {
         if (!isValidImageUrl(src)) {
-            console.warn(`[MangaCover] Invalid initial src for ${alt}:`, src);
             return "/placeholder-manga.svg";
         }
-        console.log(`[MangaCover] Loading ${alt}:`, src);
         return src;
     });
     const [attempts, setAttempts] = useState(0);
@@ -88,7 +86,6 @@ export default function MangaCover({ src, alt, className = "", priority = false 
 
         // Final fallback - only log warning once
         if (attempts >= 4) {
-            console.warn(`[MangaCover] Image not available for ${alt}, using placeholder`);
             setImgSrc("/placeholder-manga.svg");
             setAttempts(5);
         } else {

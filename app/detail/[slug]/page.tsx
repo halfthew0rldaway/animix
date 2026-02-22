@@ -129,10 +129,10 @@ export default async function DetailPage({
 
       {detail ? (
         <main className="relative">
-          {/* Hero Section */}
-          <section className="relative h-[500px] overflow-hidden">
+          {/* Hero Section - Refactored for Flex Growth */}
+          <section className="relative min-h-[60vh] flex flex-col justify-end overflow-hidden pb-10 pt-20">
             {banner ? (
-              <div className="absolute inset-0">
+              <div className="absolute inset-0 z-0">
                 <img
                   src={banner}
                   alt={title}
@@ -144,10 +144,10 @@ export default async function DetailPage({
                 <div className="absolute inset-0 bg-gradient-to-r from-zinc-950/95 via-zinc-950/40 to-transparent" />
               </div>
             ) : (
-              <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 to-zinc-950" />
+              <div className="absolute inset-0 z-0 bg-gradient-to-br from-zinc-900 to-zinc-950" />
             )}
 
-            <div className="absolute bottom-0 left-0 right-0 px-4 sm:px-6 lg:px-12 pb-10">
+            <div className="relative z-10 w-full px-4 sm:px-6 lg:px-12">
               <div className="max-w-[1600px] mx-auto">
                 {detail.synonym ? (
                   <p className="text-[10px] uppercase tracking-[0.3em] text-zinc-400 mb-2 font-bold">
@@ -159,11 +159,10 @@ export default async function DetailPage({
                   </p>
                 )}
 
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 drop-shadow-2xl leading-tight font-[family-name:var(--font-display)] tracking-wide animate-slide-up">
+                <h1 className="text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 drop-shadow-2xl leading-tight font-[family-name:var(--font-display)] tracking-wide animate-slide-up break-words">
                   {title}
                 </h1>
 
-                {/* Genre badges */}
                 {/* Genre badges */}
                 <div className="flex flex-wrap gap-2 mb-8">
                   {genres.slice(0, 5).map((genre) => (

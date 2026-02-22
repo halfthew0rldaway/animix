@@ -8,8 +8,6 @@ import { safeFetchJson } from "./api";
 // Default to Sankavollerei (using www subdomain, not api subdomain)
 const MANGA_API_BASE = process.env.NEXT_PUBLIC_MANGA_API_URL || "https://www.sankavollerei.com/comic";
 
-console.log('[Manga API] Using base URL:', MANGA_API_BASE);
-
 export type MangaItem = {
     id: string;
     title: string;
@@ -45,15 +43,7 @@ export async function fetchPopularManga(limit = 20): Promise<MangaItem[]> {
             { next: { revalidate: 3600 } }
         );
 
-        console.log('[Manga API] Popular response:', {
-            ok: response.ok,
-            hasData: response.ok ? !!response.data : false,
-            dataKeys: response.ok && response.data ? Object.keys(response.data) : [],
-            error: !response.ok ? response.error : null
-        });
-
         if (!response.ok) {
-            console.error('[Manga API] Popular fetch failed:', response.error);
             return [];
         }
 
@@ -61,13 +51,10 @@ export async function fetchPopularManga(limit = 20): Promise<MangaItem[]> {
         const comics = response.data?.comics || [];
 
         if (comics.length === 0) {
-            console.warn('[Manga API] No comics in response');
             return [];
         }
 
         const filtered = comics.filter((item: any) => isMangaSource(item));
-        console.log(`[Manga API] Filtered ${filtered.length} manga from ${comics.length} total`);
-
         return filtered
             .slice(0, limit)
             .map((item: any) => parseMangaItem(item));
@@ -85,15 +72,7 @@ export async function fetchLatestManga(limit = 20): Promise<MangaItem[]> {
             { next: { revalidate: 600 } }
         );
 
-        console.log('[Manga API] Latest response:', {
-            ok: response.ok,
-            hasData: response.ok ? !!response.data : false,
-            dataKeys: response.ok && response.data ? Object.keys(response.data) : [],
-            error: !response.ok ? response.error : null
-        });
-
         if (!response.ok) {
-            console.error('[Manga API] Latest fetch failed:', response.error);
             return [];
         }
 
@@ -101,7 +80,6 @@ export async function fetchLatestManga(limit = 20): Promise<MangaItem[]> {
         const comics = response.data?.comics || [];
 
         if (comics.length === 0) {
-            console.warn('[Manga API] No comics in latest response');
             return [];
         }
 
@@ -179,7 +157,6 @@ export async function fetchMangaLibrary(page = 1, _limit = 50, letter?: string):
         );
 
         if (!response.ok) {
-            console.error('[Manga API] Library fetch failed:', response.error);
             return { items: [], hasNext: false };
         }
 
@@ -255,7 +232,6 @@ export async function fetchUnlimitedManga(type = 'all', maxPages = 3): Promise<M
         );
 
         if (!response.ok) {
-            console.error('[Manga API] Unlimited fetch failed:', response.error);
             return [];
         }
 
@@ -279,14 +255,7 @@ export async function getMangaDetail(slug: string): Promise<MangaItem | null> {
             { next: { revalidate: 3600 } }
         );
 
-        console.log('[Manga API] Detail response for', slug, ':', {
-            ok: response.ok,
-            hasData: response.ok ? !!response.data : false,
-            dataKeys: response.ok && response.data ? Object.keys(response.data) : [],
-        });
-
         if (!response.ok) {
-            console.error('[Manga API] Detail fetch failed:', response.error);
             return null;
         }
 
@@ -294,22 +263,10 @@ export async function getMangaDetail(slug: string): Promise<MangaItem | null> {
         const comicData = response.data?.comic || response.data?.data || response.data;
 
         if (!comicData) {
-            console.warn('[Manga API] No comic data in detail response');
             return null;
         }
 
-        // Log cover-related fields
-        console.log('[Manga API] Cover fields for', slug, ':', {
-            image: comicData.image,
-            thumbnail: comicData.thumbnail,
-            cover: comicData.cover,
-            coverImage: comicData.coverImage,
-            cover_image: comicData.cover_image,
-        });
-
         const parsed = parseMangaDetailItem(comicData, slug);
-        console.log('[Manga API] Parsed cover for', slug, ':', parsed.cover);
-
         return parsed;
     } catch (error) {
         console.error('[Manga API] Detail error:', error);
@@ -325,14 +282,7 @@ export async function getMangaChapters(slug: string): Promise<ChapterItem[]> {
             { next: { revalidate: 600 } }
         );
 
-        console.log('[Manga API] Chapters response:', {
-            ok: response.ok,
-            hasData: response.ok ? !!response.data : false,
-            dataKeys: response.ok && response.data ? Object.keys(response.data) : [],
-        });
-
         if (!response.ok) {
-            console.error('[Manga API] Chapters fetch failed:', response.error);
             return [];
         }
 
@@ -340,7 +290,6 @@ export async function getMangaChapters(slug: string): Promise<ChapterItem[]> {
         const chapters = response.data?.chapters || response.data?.comic?.chapters || response.data?.data?.chapters || [];
 
         if (chapters.length === 0) {
-            console.warn('[Manga API] No chapters found for', slug);
             return [];
         }
 
@@ -382,14 +331,7 @@ export async function getChapterPages(chapterSlug: string): Promise<ChapterPages
             { next: { revalidate: 3600 } }
         );
 
-        console.log('[Manga API] Chapter pages response:', {
-            ok: response.ok,
-            hasData: response.ok ? !!response.data : false,
-            dataKeys: response.ok && response.data ? Object.keys(response.data) : [],
-        });
-
         if (!response.ok) {
-            console.error('[Manga API] Chapter pages fetch failed:', response.error);
             return { images: [], title: "", chapter: "" };
         }
 

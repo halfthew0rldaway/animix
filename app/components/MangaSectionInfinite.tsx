@@ -134,9 +134,18 @@ export default function MangaSectionInfinite({
       url.searchParams.set("page", String(currentPage));
       url.searchParams.set("perPage", String(perPage));
       const res = await fetch(url.toString());
+
       if (!res.ok) {
-        throw new Error(`Failed with ${res.status}`);
+        let errorMsg = `Failed with ${res.status}`;
+        try {
+          const errorJson = await res.json();
+          if (errorJson.error) errorMsg = errorJson.error;
+        } catch {
+          // ignore parsing error
+        }
+        throw new Error(errorMsg);
       }
+
       const json = await res.json();
       const incoming: MangaItem[] = Array.isArray(json?.items) ? json.items : [];
       const deduped = incoming.filter((item) => {

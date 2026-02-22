@@ -53,33 +53,44 @@ export default function MangaCard({ manga, onImageError }: MangaCardProps) {
     return (
         <Link
             href={`/manga/detail/${manga.slug}?cover=${encodeURIComponent(src)}`}
-            className="manga-card group"
+            className="group flex flex-col overflow-hidden bg-[var(--manga-bg)] border-2 border-[var(--manga-border)] rounded-md transition-all duration-300 hover:-translate-y-1 hover:shadow-[4px_4px_0_var(--manga-accent)]"
         >
-            <div className="manga-card-inner">
-                <div className="manga-card-cover">
-                    <img
-                        src={src}
-                        alt={manga.title}
-                        className="manga-card-image"
-                        loading="lazy"
-                        onError={handleError}
-                    />
-                    <div className="manga-card-overlay">
-                        <div className="manga-card-badge">BACA</div>
-                    </div>
-                </div>
-                <div className="manga-card-content">
-                    <h3 className="manga-card-title">{manga.title}</h3>
-                    {manga.status && (
-                        <span className="manga-card-status">
-                            {manga.status.toLowerCase() === "ongoing" ? "BERLANJUT" :
-                                manga.status.toLowerCase().includes("complete") ? "TAMAT" :
-                                    manga.status.toUpperCase()}
+            <div className="relative aspect-[2/3] overflow-hidden border-b-2 border-[var(--manga-border)]">
+                <img
+                    src={src}
+                    alt={manga.title}
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    loading="lazy"
+                    onError={handleError}
+                />
+
+                {manga.status && (
+                    <div className="absolute top-2 left-2">
+                        <span className={`px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-white shadow-[2px_2px_0_rgba(0,0,0,1)] border border-black ${manga.status.toLowerCase() === "ongoing" ? "bg-green-600" : "bg-black"
+                            }`}>
+                            {manga.status.toLowerCase() === "ongoing" ? "Lanjut" :
+                                manga.status.toLowerCase().includes("complete") ? "Tamat" :
+                                    manga.status}
                         </span>
-                    )}
-                </div>
+                    </div>
+                )}
+
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
             </div>
-            <div className="manga-card-shadow" />
+
+            <div className="flex flex-1 flex-col gap-1 p-3 bg-[var(--manga-panel-bg)]">
+                <h3
+                    className="text-sm font-bold text-[var(--manga-fg)] leading-snug group-hover:text-[var(--manga-accent)] transition-colors"
+                    style={{
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                    }}
+                >
+                    {manga.title}
+                </h3>
+            </div>
         </Link>
     );
 }

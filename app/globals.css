@@ -1,43 +1,59 @@
 @import "tailwindcss";
 
 :root {
+  /* Surface & Backgrounds - Solid, Clean, Matte */
   --background: #ffffff;
-  --foreground: #171717;
-  --surface: #f4f4f1;
-  --surface-strong: #0f0f0f;
+  --foreground: #111111;
+  --surface: #f9f9f9;
+  --surface-strong: #000000;
+  --border: #eaeaea;
 
-  /* Manga mode colors - Darker Vibrant Orange */
-  --manga-bg: #fffbf0;
-  --manga-fg: #1a1510;
-  --manga-accent: #ea580c;
-  --manga-highlight: #fff3e0;
-  --manga-border: #9a3412;
-  --manga-shadow: rgba(0, 0, 0, 0.4);
+  /* Interaction & Accents - Restrained */
+  --accent: #222222;
+  --accent-foreground: #ffffff;
+  --muted: #737373;
+  --muted-light: #f4f4f4;
+
+  /* Manga specific - harmonized with the new clean system */
+  --manga-bg: #fdfbf7;
+  /* Very subtle warm white */
+  --manga-fg: #1c1917;
+  --manga-accent: #d97706;
+  /* Solid amber, not neon orange */
+  --manga-border: #e7e5e4;
   --manga-panel-bg: #fffbf0;
-  --manga-text: #1a1510;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-muted: var(--muted);
   --font-sans: var(--font-body);
   --font-mono: var(--font-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    /* solid matte darks, no pure blacks unless strictly needed */
+    --background: #09090b;
     --foreground: #ededed;
-    --surface: #121212;
-    --surface-strong: #f5f5f5;
+    --surface: #121214;
+    --surface-strong: #ffffff;
+    --border: #27272a;
 
-    --manga-bg: #1a110a;
-    --manga-fg: #fff0e0;
-    --manga-accent: #f97316;
-    --manga-highlight: #331f00;
-    --manga-border: #c2410c;
-    --manga-panel-bg: #26160a;
-    --manga-text: #fff0e0;
+    --accent: #ffffff;
+    --accent-foreground: #000000;
+    --muted: #a1a1aa;
+    --muted-light: #18181b;
+
+    --manga-bg: #0c0a09;
+    --manga-fg: #f5f5f4;
+    --manga-accent: #b45309;
+    --manga-border: #292524;
+    --manga-panel-bg: #1c1917;
   }
 }
 
@@ -338,25 +354,19 @@ a {
 .mode-toggle {
   position: relative;
   display: flex;
-  background: #e5e5e0;
-  border: 2px solid #2d2d2d;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 999px;
-  padding: 2px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Pill shape */
+  padding: 3px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s cubic-bezier(0.2, 0, 0.2, 1);
 }
 
 .mode-toggle.comic-mode {
-  border-radius: 6px;
   border-color: var(--manga-border);
-  box-shadow: 4px 4px 0 var(--manga-shadow);
-}
-
-@media (prefers-color-scheme: dark) {
-  .mode-toggle {
-    background: #2a2a2a;
-    border-color: #4a4a4a;
-  }
+  border-radius: 8px;
+  /* Comic mode stays slightly boxy but softer */
 }
 
 .mode-toggle-btn {
@@ -367,91 +377,50 @@ a {
   justify-content: center;
   flex: 1 1 0;
   min-width: 5.5rem;
-  gap: 0.35rem;
-  padding: 0.4rem 0.8rem;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #666;
+  color: var(--muted);
   background: transparent;
   border: none;
   border-radius: 999px;
   cursor: pointer;
-  transition: color 0.2s ease, border-radius 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-  white-space: nowrap;
+  transition: color 0.2s ease;
 }
 
 .mode-toggle.comic-mode .mode-toggle-btn {
-  border-radius: 4px;
-}
-
-.mode-toggle-btn:disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
+  border-radius: 6px;
 }
 
 .mode-toggle-btn.active {
-  color: #1a1a1a;
-}
-
-@media (prefers-color-scheme: dark) {
-  .mode-toggle-btn {
-    color: #999;
-  }
-
-  .mode-toggle-btn.active {
-    color: #f5f5f0;
-  }
-}
-
-.mode-icon {
-  font-size: 1rem;
-}
-
-.mode-label {
-  display: none;
-}
-
-@media (min-width: 640px) {
-  .mode-label {
-    display: inline;
-  }
+  color: var(--foreground);
 }
 
 .mode-toggle-slider {
   position: absolute;
-  top: 2px;
-  left: 2px;
-  width: calc(50% - 2px);
-  height: calc(100% - 4px);
-  background: #fff;
-  border: 2px solid #2d2d2d;
+  top: 3px;
+  left: 3px;
+  width: calc(50% - 3px);
+  height: calc(100% - 6px);
+  background: var(--background);
+  border: 1px solid var(--border);
   border-radius: 999px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
-    border-radius 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
-    background 0.3s ease,
-    border 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s cubic-bezier(0.2, 0, 0.2, 1), border-radius 300ms ease;
   z-index: 1;
 }
 
 .mode-toggle.comic-mode .mode-toggle-slider {
-  border-radius: 4px;
-}
-
-@media (prefers-color-scheme: dark) {
-  .mode-toggle-slider {
-    background: #3a3a3a;
-    border-color: #5a5a5a;
-  }
+  border-radius: 6px;
+  background: var(--manga-panel-bg);
+  border-color: var(--manga-accent);
 }
 
 .mode-toggle-slider.right {
   transform: translateX(100%);
-  background: var(--manga-accent);
-  border-color: var(--manga-border);
-  box-shadow: 0 0 10px var(--manga-accent);
 }
 
 /* Manga Reader - Enhanced */
@@ -512,6 +481,7 @@ a {
 }
 
 /* Manga Hero Section */
+/* Manga Hero - Fixed Solid Background */
 .manga-hero {
   position: relative;
   display: flex;
@@ -519,9 +489,12 @@ a {
   gap: 2rem;
   padding: 3rem 2rem;
   margin-bottom: 3rem;
-  background: var(--manga-panel-bg);
-  border: 4px solid var(--manga-border);
-  box-shadow: 8px 8px 0 var(--manga-shadow);
+  background: #fffbf0;
+  /* Solid Cream */
+  border: 4px solid #9a3412;
+  /* Thick Rust Border */
+  box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.15);
+  /* Solid shadow */
   overflow: hidden;
 }
 
@@ -530,11 +503,10 @@ a {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 4rem 3rem;
+    padding: 4rem 4rem;
   }
 }
 
-/* RESTORED STYLES */
 .manga-hero-content {
   flex: 1;
   z-index: 2;
@@ -543,59 +515,47 @@ a {
 .manga-hero-title {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0;
   margin-bottom: 1.5rem;
 }
 
+/* The 'COMIC' text - Graffiti Style */
 .manga-hero-title-main {
-  font-family: var(--font-jember), var(--font-display);
-  font-size: 3.5rem;
+  font-family: var(--font-jember), var(--font-display), sans-serif;
+  font-size: 4rem;
   font-weight: 400;
-  line-height: 0.9;
-  color: var(--manga-accent);
+  line-height: 1;
+  color: #ea580c;
   text-transform: uppercase;
   letter-spacing: 0.02em;
+  -webkit-text-stroke: 2px #9a3412;
   text-shadow:
-    3px 3px 0 var(--manga-border),
-    -1px -1px 0 var(--manga-border),
-    1px -1px 0 var(--manga-border),
-    -1px 1px 0 var(--manga-border),
-    1px 1px 0 var(--manga-border);
+    3px 3px 0 #9a3412,
+    -1px -1px 0 #9a3412;
+  transform: rotate(-2deg);
+  display: inline-block;
+  margin-bottom: 0.5rem;
 }
 
 @media (min-width: 768px) {
   .manga-hero-title-main {
-    font-size: 5rem;
+    font-size: 6rem;
   }
 }
 
 .manga-hero-title-sub {
-  font-family: var(--font-display);
+  font-family: var(--font-sans);
   font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--manga-fg);
+  font-weight: 800;
+  color: #1a1510;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-
-@media (min-width: 768px) {
-  .manga-hero-title-sub {
-    font-size: 2rem;
-  }
-}
-
-.manga-hero-caption {
-  font-size: 1rem;
-  line-height: 1.6;
-  color: var(--manga-fg);
-  opacity: 0.8;
-  max-width: 500px;
-  text-align: justify;
+  letter-spacing: 0.2em;
+  margin-left: 0.5rem;
 }
 
 .manga-hero-decoration {
   display: none;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 @media (min-width: 768px) {
@@ -604,39 +564,32 @@ a {
   }
 }
 
+/* The Floating Panels */
 .manga-hero-panel {
   width: 80px;
   height: 120px;
   background: repeating-linear-gradient(45deg,
-      var(--manga-accent),
-      var(--manga-accent) 2px,
-      transparent 2px,
-      transparent 6px);
-  border: 3px solid var(--manga-border);
-  transform: rotate(-5deg);
-  animation: panel-float 3s ease-in-out infinite;
+      #ea580c,
+      #ea580c 2px,
+      #fffbf0 2px,
+      #fffbf0 8px);
+  border: 3px solid #9a3412;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.1);
+  transform: rotate(-6deg);
+  transition: transform 0.3s ease;
 }
 
 .manga-hero-panel:nth-child(2) {
-  transform: rotate(5deg);
-  animation-delay: 0.5s;
+  transform: rotate(4deg);
+  margin-top: -20px;
 }
 
 .manga-hero-panel:nth-child(3) {
   transform: rotate(-3deg);
-  animation-delay: 1s;
 }
 
-@keyframes panel-float {
-
-  0%,
-  100% {
-    transform: translateY(0) rotate(-5deg);
-  }
-
-  50% {
-    transform: translateY(-10px) rotate(-5deg);
-  }
+.manga-hero-panel:hover {
+  transform: scale(1.1) rotate(0deg);
 }
 
 /* Manga Content */
@@ -657,55 +610,54 @@ a {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  padding-bottom: 2rem;
+  position: relative;
 }
 
 .manga-section-title-wrapper {
-  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 1rem;
+  position: relative;
 }
 
 .manga-section-title {
-  font-family: var(--font-jember), var(--font-display);
+  font-family: var(--font-jember), var(--font-display), sans-serif;
   font-size: 2.5rem;
   font-weight: 400;
-  color: var(--manga-fg);
+  color: #1a1510;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  position: relative;
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  background: var(--manga-panel-bg);
-  border: 3px solid var(--manga-border);
-  box-shadow: 4px 4px 0 var(--manga-shadow);
+  padding: 0.5rem 1.5rem;
+  background: #fff;
+  border: 3px solid #1a1510;
+  box-shadow: 6px 6px 0 #9a3412;
   transform: skew(-2deg);
+  display: inline-block;
 }
 
 .manga-section-accent {
-  width: 60px;
+  width: 100px;
   height: 4px;
-  background: var(--manga-accent);
-  border: 2px solid var(--manga-border);
+  background: var(--manga-border);
+  margin-top: 1rem;
 }
 
 .manga-section-caption {
-  font-size: 0.95rem;
+  font-size: 1rem;
   color: var(--manga-fg);
-  opacity: 0.7;
-  margin-left: 1rem;
-  text-align: justify;
+  opacity: 0.8;
+  margin-top: 0.5rem;
+  font-weight: 500;
 }
 
 .manga-section-warning,
 .manga-section-empty {
-  padding: 2rem;
+  padding: 3rem;
   text-align: center;
-  background: var(--manga-panel-bg);
-  border: 3px solid var(--manga-border);
-  border-style: dashed;
-  color: var(--manga-fg);
-  opacity: 0.6;
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  color: var(--muted);
+  border-radius: 4px;
 }
 
 /* Manga Grid */
@@ -848,7 +800,7 @@ a {
 .manga-detail-main {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 6rem 1rem 2rem 1rem;
   display: flex;
   flex-direction: column;
   gap: 3rem;
@@ -919,7 +871,7 @@ a {
 
 .manga-detail-title {
   font-family: var(--font-display);
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 900;
   line-height: 1.1;
   color: var(--manga-fg);
@@ -1920,4 +1872,35 @@ a {
     max-width: 150px;
     margin: 0.1rem auto 0;
   }
+}
+
+/* Keyframes for HeroCarousel and new interactions */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

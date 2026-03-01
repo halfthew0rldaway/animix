@@ -68,3 +68,33 @@ export function MangaLoader({ title = "SABAR!!", subTitle = "AMBIL HALAMAN" }: {
         </div>
     );
 }
+
+export function DonghuaLoader({ title = "MEMBUKA ARSIP..." }: { title?: string }) {
+    return (
+        <div className="flex h-full w-full flex-col items-center justify-center p-10 min-h-[50vh] bg-transparent">
+            <div className="relative flex h-24 w-24 items-center justify-center">
+                {/* Outer Ring */}
+                <div className="absolute inset-0 animate-[spin_10s_linear_infinite] rounded-full border border-[#8a857e]/30 p-2">
+                    <div className="h-full w-full rounded-full border border-[#8a857e]/50 border-t-[#c2baab]/90"></div>
+                </div>
+
+                {/* Inner Ring */}
+                <div className="absolute inset-2 animate-[spin_6s_linear_infinite_reverse] rounded-full border border-[#8a857e]/20 p-1">
+                    <div className="h-full w-full rounded-full border border-b-[#8a857e]/80 border-r-[#8a857e]/80"></div>
+                </div>
+
+                {/* Center Core */}
+                <div className="relative z-10 flex h-8 w-8 items-center justify-center animate-pulse">
+                    <div className="h-2 w-2 rounded-full bg-[#8a857e] shadow-[0_0_10px_#8a857e]"></div>
+                </div>
+            </div>
+
+            <div className="mt-8 flex flex-col items-center gap-2">
+                <p className="animate-pulse text-xs font-serif uppercase tracking-[0.4em] text-[#8a857e] dark:text-[#a09c95]">
+                    {title}
+                </p>
+                <div className="h-[1px] w-12 bg-[#8a857e]/50"></div>
+            </div>
+        </div>
+    );
+}

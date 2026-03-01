@@ -45,6 +45,31 @@ const extractDetail = (payload: DetailResponse): Detail | null => {
 const stripHtml = (value: string) =>
   value.replace(/<br\s*\/?\s*>/gi, "\n").replace(/<[^>]*>/g, "").trim();
 
+const extractSamehadakuDetail = (payload: any, actualSlug: string): Detail | null => {
+  const dataWrapper = payload?.data;
+  const data = dataWrapper?.data || dataWrapper;
+  if (!data) return null;
+  return {
+    slug: `smhd::${actualSlug}`,
+    title: data.title || data.japanese || data.english || actualSlug,
+    poster: data.poster,
+    synopsis: data.synopsis?.paragraphs?.join("\n\n"),
+    duration: data.duration,
+    author: data.studios,
+    season: data.season,
+    aired: data.aired,
+    studio: data.studios,
+    synonym: data.japanese || data.english,
+    status: data.status,
+    genres: data.genreList?.map((g: any) => ({ slug: g.genreId, name: g.title })),
+    episodes: data.episodeList?.map((e: any) => ({
+      slug: `smhd::${e.episodeId}`,
+      name: typeof e.title === "number" ? `Episode ${e.title}` : (e.title?.toString() || ""),
+    })),
+    batch: data.batchList?.[0] ? { slug: `smhd::${data.batchList[0].batchId}` } : undefined,
+  };
+};
+
 export default async function DetailPage({
   params,
 }: {
@@ -52,6 +77,10 @@ export default async function DetailPage({
 }) {
   const session = await AuthUserSession();
   const { slug } = await params;
+  const decodedSlug = decodeURIComponent(slug);
+
+  const isSamehadaku = decodedSlug.startsWith("smhd::");
+  const actualSlug = isSamehadaku ? decodedSlug.slice(6) : decodedSlug;
 
   let detail: Detail | null = null;
   let error: string | null = null;
@@ -59,17 +88,45 @@ export default async function DetailPage({
   let aniListMedia: Awaited<ReturnType<typeof fetchAniListByTitle>> = null;
 
   try {
-    const res = await safeFetchJson<DetailResponse>(
-      buildApiUrl(`/detail/${encodeURIComponent(slug)}`),
-      { next: { revalidate: 300 } }
+    let url = buildApiUrl(`/detail/${encodeURIComponent(actualSlug)}`);
+    if (isSamehadaku) {
+      const secondaryBase = process.env.NEXT_PUBLIC_SECONDARY_API_URL?.replace(/\/+$/, "") ?? "";
+      url = `${secondaryBase}/anime/${encodeURIComponent(actualSlug)}`;
+    }
+
+    const origin = process.env.API_ORIGIN || new URL(url).origin;
+    const requestHeaders = {
+      "User-Agent":
+        process.env.API_USER_AGENT ||
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36",
+      Accept: "application/json,text/plain,*/*",
+      "Accept-Language": "en-US,en;q=0.9",
+      Origin: origin,
+      "Sec-Fetch-Site": "same-site",
+      "Sec-Fetch-Mode": "cors",
+      "Sec-Fetch-Dest": "empty",
+    };
+
+    const res = await safeFetchJson<any>(
+      url,
+      { next: { revalidate: 300 }, headers: requestHeaders }
     );
     if (res.ok) {
-      detail = extractDetail(res.data);
+      if (isSamehadaku) {
+        detail = extractSamehadakuDetail(res, actualSlug);
+      } else {
+        detail = extractDetail(res.data);
+      }
     } else {
       error = res.error;
     }
   } catch (err) {
+    console.error("Fetch detail failed:", err);
     error = err instanceof Error ? err.message : "Failed to load detail";
+  }
+
+  if (error) {
+    console.error(`Detail page error for ${actualSlug}:`, error);
   }
 
   if (detail?.title) {
@@ -110,7 +167,11 @@ export default async function DetailPage({
   const totalEpisodes = hiAnimeInfo?.totalEpisodes ?? detail?.episodes?.length;
 
   const watchHref = detail?.episodes?.[0]
-    ? `/watch/${encodeURIComponent(detail.episodes[0].slug)}?slug=${encodeURIComponent(
+    ? `/watch/${encodeURIComponent(
+      decodeURIComponent(detail.episodes[0].slug)
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // remove accents like ü -> u
+        .replace(/walka¼re/gi, "walkure") // hard fix for animasu weird encoding bug
+    )}?slug=${encodeURIComponent(
       animeSlug
     )}&title=${encodeURIComponent(title)}&image=${encodeURIComponent(poster)}`
     : null;
@@ -259,7 +320,11 @@ export default async function DetailPage({
                         {detail.episodes.map((episode, idx) => (
                           <Link
                             key={episode.slug}
-                            href={`/watch/${encodeURIComponent(episode.slug)}?slug=${encodeURIComponent(
+                            href={`/watch/${encodeURIComponent(
+                              decodeURIComponent(episode.slug)
+                                .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                                .replace(/walka¼re/gi, "walkure")
+                            )}?slug=${encodeURIComponent(
                               animeSlug
                             )}&title=${encodeURIComponent(title)}&image=${encodeURIComponent(poster)}`}
                             className="group relative bg-zinc-900 hover:bg-green-600 border border-zinc-800 hover:border-green-500 rounded-lg p-3 text-center transition-all hover:scale-110 shadow-lg hover:shadow-green-900/50 hover-lift"

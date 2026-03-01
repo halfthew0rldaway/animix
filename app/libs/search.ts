@@ -1,5 +1,6 @@
 import Fuse from "fuse.js";
 import { safeFetchJson } from "./api";
+import { fetchAniListByTitle } from "./anilist";
 
 export type AnimeItem = {
   slug: string;
@@ -13,7 +14,25 @@ export type AnimeItem = {
 type AnimeListResponse = {
   animes?: AnimeItem[];
   result?: { animes?: AnimeItem[] };
-  data?: { animes?: AnimeItem[] };
+  data?: AnimeItem[] | { animes?: AnimeItem[] };
+};
+
+// Samehadaku search returns { data: { animeList: [...] } }
+// Each item uses 'animeId' as the slug field
+type SamehadakuAnimeItem = {
+  title: string;
+  animeId: string;
+  poster: string;
+  episode?: string | number | null;
+  type?: string | null;
+};
+type SamehadakuSearchResponse = {
+  data?: {
+    animeList?: SamehadakuAnimeItem[];
+    animes?: AnimeItem[];
+  } | AnimeItem[];
+  animes?: AnimeItem[];
+  result?: { animes?: AnimeItem[] };
 };
 
 type SearchIndexCache = {
@@ -35,7 +54,7 @@ const REQUEST_DELAY_MS =
 const MAX_REQUESTS =
   Number(process.env.SEARCH_MAX_REQUESTS ?? "") || 1500;
 const MAX_REMOTE_QUERIES =
-  Number(process.env.SEARCH_MAX_REMOTE_QUERIES ?? "") || 3;
+  Number(process.env.SEARCH_MAX_REMOTE_QUERIES ?? "") || 4;
 const LETTERS = ["0-9", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")];
 
 const cache: SearchIndexCache = {
@@ -48,9 +67,31 @@ const cache: SearchIndexCache = {
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const extractAnimes = (payload: AnimeListResponse): AnimeItem[] => {
-  return (
-    payload.animes ?? payload.result?.animes ?? payload.data?.animes ?? []
-  );
+  if (payload.animes) return payload.animes;
+  if (payload.result?.animes) return payload.result.animes;
+  if (Array.isArray(payload.data)) return payload.data as AnimeItem[];
+  if (payload.data && !Array.isArray(payload.data) && payload.data.animes) return payload.data.animes;
+  return [];
+};
+
+const extractSamehadakuAnimes = (payload: SamehadakuSearchResponse): AnimeItem[] => {
+  const data = payload.data;
+  // Primary shape: { data: { animeList: [ { animeId, title, poster, type } ] } }
+  if (data && !Array.isArray(data) && Array.isArray((data as { animeList?: unknown }).animeList)) {
+    const list = (data as { animeList: SamehadakuAnimeItem[] }).animeList;
+    return list.map((item) => ({
+      slug: `smhd::${item.animeId}`,
+      title: item.title,
+      poster: item.poster,
+      episode: item.episode ?? null,
+      type: item.type ?? null,
+    }));
+  }
+  // Fallback shapes
+  if (Array.isArray(data)) return data as AnimeItem[];
+  if (payload.animes) return payload.animes;
+  if (payload.result?.animes) return payload.result.animes;
+  return [];
 };
 
 const normalizeQuery = (query: string) => {
@@ -87,6 +128,12 @@ const expandQueryVariants = (query: string) => {
     variants.add(query.replace(/\bs\d+\b/, `season ${season}`));
   }
 
+  // Add first meaningful word for APIs that match better on short keywords
+  const words = query.replace(/\b(no|the|of|a|an|to|in|on|and|or)\b/gi, " ").trim().split(/\s+/);
+  if (words.length > 1 && words[0].length >= 4) {
+    variants.add(words[0]);
+  }
+
   return variants;
 };
 
@@ -96,7 +143,7 @@ const createFuse = (items: AnimeItem[]) => {
       { name: "title", weight: 0.8 },
       { name: "slug", weight: 0.2 },
     ],
-    threshold: 0.32,
+    threshold: 0.45,
     ignoreLocation: true,
     minMatchCharLength: 2,
     includeScore: true,
@@ -194,8 +241,16 @@ const fuzzySearch = (query: string) => {
     .map((entry) => entry.item);
 };
 
-const buildRemoteQueries = (rawQuery: string, normalized: string) => {
+const buildRemoteQueries = (rawQuery: string, normalized: string, aniListTitles: string[] = []) => {
   const queries = new Set<string>();
+
+  // High priority: AniList corrected titles
+  for (const title of aniListTitles) {
+    if (title && title.trim()) {
+      queries.add(title.trim());
+    }
+  }
+
   if (rawQuery.trim()) queries.add(rawQuery.trim());
   if (normalized) queries.add(normalized);
 
@@ -208,7 +263,7 @@ const buildRemoteQueries = (rawQuery: string, normalized: string) => {
     if (variantSlug) queries.add(variantSlug);
   }
 
-  return Array.from(queries).slice(0, MAX_REMOTE_QUERIES);
+  return Array.from(queries).slice(0, MAX_REMOTE_QUERIES + 2); // Allow a little more if anilist added titles
 };
 
 const remoteSearch = async (apiBase: string, query: string) => {
@@ -217,6 +272,15 @@ const remoteSearch = async (apiBase: string, query: string) => {
   );
 
   return payload ? extractAnimes(payload) : [];
+};
+
+// Samehadaku uses ?q= query param instead of /:keyword path
+const remoteSearchSamehadaku = async (apiBase: string, query: string) => {
+  const payload = await fetchJson<SamehadakuSearchResponse>(
+    `${apiBase}/search?q=${encodeURIComponent(query)}`
+  );
+
+  return payload ? extractSamehadakuAnimes(payload) : [];
 };
 
 const mergeBySlug = (primary: AnimeItem[], secondary: AnimeItem[]) => {
@@ -245,6 +309,8 @@ export async function searchAnime(query: string, apiBase: string) {
   const normalized = normalizeQuery(raw);
   if (!normalized) return [] as AnimeItem[];
 
+  const secondaryBase = process.env.NEXT_PUBLIC_SECONDARY_API_URL?.replace(/\/+$/, "") ?? null;
+
   const hasIndex =
     cache.items.length > 0 && Date.now() - cache.builtAt < INDEX_TTL_MS;
 
@@ -252,14 +318,38 @@ export async function searchAnime(query: string, apiBase: string) {
     void ensureIndex(apiBase);
   }
 
-  const remoteQueries = buildRemoteQueries(raw, normalized);
-  const remoteResultsList = await Promise.all(
-    remoteQueries.map((term) => remoteSearch(apiBase, term))
+  const aniListTitles: string[] = [];
+  try {
+    const aniListMedia = await fetchAniListByTitle(raw);
+    if (aniListMedia?.title) {
+      if (aniListMedia.title.romaji) aniListTitles.push(aniListMedia.title.romaji);
+      if (aniListMedia.title.english) aniListTitles.push(aniListMedia.title.english);
+    }
+  } catch (err) {
+    console.error("AniList search augmentation failed:", err);
+  }
+
+  const remoteQueries = buildRemoteQueries(raw, normalized, aniListTitles);
+
+  // Fan out to primary (animasu path-based) and secondary (samehadaku query-param) in parallel
+  const [primaryResultsList, secondaryResultsList] = await Promise.all([
+    Promise.all(remoteQueries.map((term) => remoteSearch(apiBase, term))),
+    secondaryBase
+      ? Promise.all(remoteQueries.map((term) => remoteSearchSamehadaku(secondaryBase, term)))
+      : Promise.resolve([] as AnimeItem[][]),
+  ]);
+
+  const primaryResults = mergeBySlug(
+    primaryResultsList[0] ?? [],
+    primaryResultsList.slice(1).flat()
   );
-  const remoteResults = mergeBySlug(
-    remoteResultsList[0] ?? [],
-    remoteResultsList.slice(1).flat()
+  const secondaryResults = mergeBySlug(
+    secondaryResultsList[0] ?? [],
+    secondaryResultsList.slice(1).flat()
   );
+
+  // Primary results take precedence; secondary fills in missing titles
+  const remoteResults = mergeBySlug(primaryResults, secondaryResults);
 
   if (!hasIndex || !SEARCH_ENABLE_INDEX) {
     if (cache.building && remoteResults.length < 6) {

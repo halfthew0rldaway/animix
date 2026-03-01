@@ -19,11 +19,15 @@ type HistoryItem = {
 type HistoryListProps = {
   title?: string;
   limit?: number;
+  historyKey?: string;
+  baseRoute?: string;
 };
 
 export default function HistoryList({
   title = "Continue Watching",
   limit = 8,
+  historyKey = "juju-otaku-history",
+  baseRoute = "/watch",
 }: HistoryListProps) {
   const { data: session } = useSession();
   const useDatabase = process.env.NEXT_PUBLIC_USE_DATABASE === "true";
@@ -33,7 +37,7 @@ export default function HistoryList({
 
   useEffect(() => {
     const loadLocal = () => {
-      const raw = localStorage.getItem(HISTORY_KEY);
+      const raw = localStorage.getItem(historyKey);
       const parsed = raw ? (JSON.parse(raw) as HistoryItem[]) : [];
       setItems(Array.isArray(parsed) ? parsed.slice(0, limit) : []);
     };
@@ -46,6 +50,8 @@ export default function HistoryList({
 
     const loadRemote = async () => {
       try {
+        // API history could be modified to support type, but for now we fallback to local parsing if needed. 
+        // Assuming API history mixes them. For local it uses historyKey anyway.
         const res = await fetch("/api/history");
         if (!res.ok) {
           loadLocal();
@@ -61,20 +67,20 @@ export default function HistoryList({
     };
 
     loadRemote();
-  }, [useDatabase, session?.user, limit]);
+  }, [useDatabase, session?.user, limit, historyKey]);
 
   const hasItems = items.length > 0;
   const cards = useMemo(
     () =>
       items.map((item) => ({
         ...item,
-        href: `/watch/${encodeURIComponent(item.episodeId)}?slug=${encodeURIComponent(
+        href: `${baseRoute}/${encodeURIComponent(item.episodeId)}?slug=${encodeURIComponent(
           item.animeId ?? ""
         )}&title=${encodeURIComponent(item.title)}&image=${encodeURIComponent(
           item.image ?? ""
         )}`,
       })),
-    [items]
+    [items, baseRoute]
   );
 
   return (

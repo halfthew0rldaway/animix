@@ -18,33 +18,38 @@ export default function Navbar({ user }: NavbarProps) {
 
   const activeUser = useMemo(() => data?.user ?? user ?? null, [data, user]);
 
+  const isMangaMode = pathname.startsWith("/manga");
+  const isDonghuaMode = pathname.startsWith("/donghua");
+  const isReadPage = pathname.includes("/manga/read");
+
   const submitSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const trimmed = query.trim();
     if (!trimmed) return;
-    const searchPath = pathname.startsWith("/manga") ? "/manga/search" : "/search";
+    const searchPath = isMangaMode ? "/manga/search" : isDonghuaMode ? "/donghua/search" : "/search";
     router.push(`${searchPath}/${encodeURIComponent(trimmed)}`);
   };
 
-  const isMangaMode = pathname.startsWith("/manga");
-  const isReadPage = pathname.includes("/manga/read");
-
   return (
     <header
-      className={`sticky top-0 z-40 border-b transition-colors duration-300 ${isReadPage || isMangaMode
-        ? "bg-[#fffbf0] border-[#9a3412] text-[#1a1510]" /* Manga: Cream Bg, Rust Border, Black Text */
-        : "bg-[#09090b] border-zinc-800 text-white" /* Anime: Dark Bg, Dark Border, White Text */
+      className={`sticky top-0 z-40 border-b transition-colors duration-300 ${isDonghuaMode
+        ? "bg-[#f7f5f0] border-[#e5dcd3] text-[#1c1b1a] dark:bg-[#151413] dark:border-[#3a3836] dark:text-[#dbd7d2]"
+        : isReadPage || isMangaMode
+          ? "bg-[#fffbf0] border-[#9a3412] text-[#1a1510]" /* Manga: Cream Bg, Rust Border, Black Text */
+          : "bg-[#09090b] border-zinc-800 text-white" /* Anime: Dark Bg, Dark Border, White Text */
         }`}
     >
       <div className="mx-auto flex w-full items-center gap-6 px-4 py-3 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link
           href="/"
-          className={`font-brand text-2xl tracking-wide ${isReadPage || isMangaMode
-            ? "text-[#ea580c]"
-            : "text-white"
+          className={`font-brand text-2xl tracking-wide ${isDonghuaMode
+            ? "text-[#2c2a27] dark:text-[#dbd7d2]"
+            : isReadPage || isMangaMode
+              ? "text-[#ea580c]"
+              : "text-white"
             }`}
-          style={{ fontFamily: 'var(--font-brand), sans-serif', fontWeight: 'normal' }}
+          style={{ fontFamily: isDonghuaMode ? "'Georgia', serif" : 'var(--font-brand), sans-serif', fontWeight: 'normal' }}
         >
           Animix
         </Link>
@@ -56,12 +61,26 @@ export default function Navbar({ user }: NavbarProps) {
 
         {/* Navigation Links - Desktop */}
         <nav
-          className={`hidden items-center gap-6 text-xs font-bold uppercase tracking-widest md:flex ${isReadPage || isMangaMode
-            ? "text-[#1a1510]"
-            : "text-zinc-400"
+          className={`hidden items-center gap-6 text-xs font-bold uppercase tracking-widest md:flex ${isDonghuaMode
+            ? "text-[#5c5852] dark:text-[#8a857e]"
+            : isReadPage || isMangaMode
+              ? "text-[#1a1510]"
+              : "text-zinc-400"
             }`}
         >
-          {pathname.startsWith("/manga") ? (
+          {isDonghuaMode ? (
+            <>
+              <Link href="/donghua" className={`transition-colors hover:text-[#1c1b1a] dark:hover:text-[#dbd7d2] ${pathname === "/donghua" ? "text-[#1c1b1a] dark:text-[#dbd7d2]" : ""}`}>
+                Lobi
+              </Link>
+              <Link href="/donghua/list" className={`transition-colors hover:text-[#1c1b1a] dark:hover:text-[#dbd7d2] ${pathname.startsWith("/donghua/list") ? "text-[#1c1b1a] dark:text-[#dbd7d2]" : ""}`}>
+                Daftar Donghua
+              </Link>
+              <Link href="/donghua/history" className={`transition-colors hover:text-[#1c1b1a] dark:hover:text-[#dbd7d2] ${pathname.startsWith("/donghua/history") ? "text-[#1c1b1a] dark:text-[#dbd7d2]" : ""}`}>
+                Riwayat
+              </Link>
+            </>
+          ) : pathname.startsWith("/manga") ? (
             <>
               <Link href="/manga" className={`transition-colors hover:text-[#ea580c] ${pathname === "/manga" ? "text-[#ea580c]" : ""}`}>
                 Lobi
@@ -97,16 +116,20 @@ export default function Navbar({ user }: NavbarProps) {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder={pathname.startsWith("/manga") ? "Cari komik..." : "Cari..."}
-            className={`w-full px-4 py-2 text-sm transition-all duration-300 focus:outline-none border ${isReadPage || isMangaMode
-              ? "rounded-md bg-white border-[#9a3412] text-[#1a1510] placeholder:text-zinc-400 focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c]"
-              : "rounded-full bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-500 focus:bg-black focus:border-zinc-700"
+            className={`w-full px-4 py-2 text-sm transition-all duration-300 focus:outline-none border ${isDonghuaMode
+              ? "rounded border-[#8a857e] bg-transparent text-[#1c1b1a] placeholder:text-[#8a857e] focus:border-[#2c2a27] dark:text-[#dbd7d2] dark:focus:border-[#a09c95]"
+              : isReadPage || isMangaMode
+                ? "rounded-md bg-white border-[#9a3412] text-[#1a1510] placeholder:text-zinc-400 focus:border-[#ea580c] focus:ring-1 focus:ring-[#ea580c]"
+                : "rounded-full bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-500 focus:bg-black focus:border-zinc-700"
               }`}
           />
           <button
             type="submit"
-            className={`hidden sm:block px-5 py-2 text-xs font-bold uppercase tracking-wider transition-all duration-200 border shadow-sm ${isReadPage || isMangaMode
-              ? "rounded-md bg-[#ea580c] border-[#ea580c] text-white hover:bg-[#c2410c]"
-              : "rounded-full bg-white border-white text-black hover:bg-zinc-200"
+            className={`hidden sm:block px-5 py-2 text-xs font-bold uppercase tracking-wider transition-all duration-200 border shadow-sm ${isDonghuaMode
+              ? "rounded bg-[#1c1b1a] border-[#1c1b1a] text-[#f7f5f0] hover:bg-[#2c2a27] dark:bg-[#dbd7d2] dark:text-[#151413] dark:hover:bg-[#a09c95] dark:border-[#dbd7d2]"
+              : isReadPage || isMangaMode
+                ? "rounded-md bg-[#ea580c] border-[#ea580c] text-white hover:bg-[#c2410c]"
+                : "rounded-full bg-white border-white text-black hover:bg-zinc-200"
               }`}
           >
             GAS
@@ -122,11 +145,11 @@ export default function Navbar({ user }: NavbarProps) {
                   <img
                     src={activeUser.image}
                     alt={activeUser.name ?? "User"}
-                    className={`h-9 w-9 object-cover border ${isReadPage || isMangaMode ? "rounded-md border-[#9a3412]" : "rounded-full border-zinc-700"}`}
+                    className={`h-9 w-9 object-cover border ${isDonghuaMode ? "rounded border-[#8a857e]" : isReadPage || isMangaMode ? "rounded-md border-[#9a3412]" : "rounded-full border-zinc-700"}`}
                     referrerPolicy="no-referrer"
                   />
                 ) : (
-                  <div className={`flex h-9 w-9 items-center justify-center text-xs font-bold uppercase ${isReadPage || isMangaMode ? "rounded-md bg-white border border-[#9a3412] text-[#ea580c]" : "rounded-full bg-zinc-800 border border-zinc-700 text-white"}`}>
+                  <div className={`flex h-9 w-9 items-center justify-center text-xs font-bold uppercase ${isDonghuaMode ? "rounded border border-[#8a857e] text-[#1c1b1a] dark:text-[#dbd7d2]" : isReadPage || isMangaMode ? "rounded-md bg-white border border-[#9a3412] text-[#ea580c]" : "rounded-full bg-zinc-800 border border-zinc-700 text-white"}`}>
                     {activeUser.name?.slice(0, 1) ?? "U"}
                   </div>
                 )}
@@ -134,9 +157,11 @@ export default function Navbar({ user }: NavbarProps) {
               <button
                 type="button"
                 onClick={() => signOut()}
-                className={`hidden md:block px-5 py-2 text-xs font-bold uppercase tracking-wider transition-colors border shadow-sm ${isReadPage || isMangaMode
-                  ? "rounded-md border-[#9a3412] bg-white text-[#1a1510] hover:bg-[#fff0e0]"
-                  : "rounded-full border-zinc-700 bg-black text-white hover:bg-zinc-900"
+                className={`hidden md:block px-5 py-2 text-xs font-bold uppercase tracking-wider transition-colors border shadow-sm ${isDonghuaMode
+                  ? "rounded border-[#8a857e] text-[#5c5852] hover:bg-[#e5dcd3] dark:hover:bg-[#3a3836]"
+                  : isReadPage || isMangaMode
+                    ? "rounded-md border-[#9a3412] bg-white text-[#1a1510] hover:bg-[#fff0e0]"
+                    : "rounded-full border-zinc-700 bg-black text-white hover:bg-zinc-900"
                   }`}
               >
                 Keluar
@@ -146,9 +171,11 @@ export default function Navbar({ user }: NavbarProps) {
             <button
               type="button"
               onClick={() => signIn()}
-              className={`px-6 py-2 text-xs font-bold uppercase tracking-wider transition-colors border shadow-sm ${isReadPage || isMangaMode
-                ? "rounded-md bg-[#18181b] border-[#18181b] text-white hover:bg-black"
-                : "rounded-full bg-zinc-800 border-zinc-700 text-white hover:bg-zinc-700"
+              className={`px-6 py-2 text-xs font-bold uppercase tracking-wider transition-colors border shadow-sm ${isDonghuaMode
+                ? "rounded border-[#8a857e] text-[#1c1b1a] hover:bg-[#e5dcd3] dark:text-[#dbd7d2] dark:hover:bg-[#3a3836]"
+                : isReadPage || isMangaMode
+                  ? "rounded-md bg-[#18181b] border-[#18181b] text-white hover:bg-black"
+                  : "rounded-full bg-zinc-800 border-zinc-700 text-white hover:bg-zinc-700"
                 }`}
             >
               Masuk
@@ -158,15 +185,17 @@ export default function Navbar({ user }: NavbarProps) {
       </div>
 
       {/* Mobile Bottom Navigation */}
-      <nav className={`fixed bottom-0 left-0 right-0 z-50 grid grid-cols-4 items-center justify-items-center h-16 w-full border-t pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.3)] transition-all md:hidden ${isReadPage || isMangaMode
-        ? "border-[#9a3412] bg-[#fffbf0] text-[#1a1510]"
-        : "border-zinc-800 bg-[#09090b] text-zinc-400"
+      <nav className={`fixed bottom-0 left-0 right-0 z-50 grid grid-cols-4 items-center justify-items-center h-16 w-full border-t pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.3)] transition-all md:hidden ${isDonghuaMode
+        ? "border-[#e5dcd3] bg-[#f7f5f0] text-[#5c5852] dark:border-[#3a3836] dark:bg-[#151413] dark:text-[#a09c95]"
+        : isReadPage || isMangaMode
+          ? "border-[#9a3412] bg-[#fffbf0] text-[#1a1510]"
+          : "border-zinc-800 bg-[#09090b] text-zinc-400"
         }`}>
         <Link
-          href={isMangaMode ? "/manga" : "/"}
-          className={`group flex flex-col items-center gap-1 p-2 transition-all active:scale-95 ${(isMangaMode ? pathname === "/manga" : pathname === "/")
-            ? (isMangaMode ? "text-[#ea580c]" : "text-white font-bold")
-            : (isMangaMode ? "hover:text-[#ea580c]" : "hover:text-white")
+          href={isDonghuaMode ? "/donghua" : isMangaMode ? "/manga" : "/"}
+          className={`group flex flex-col items-center gap-1 p-2 transition-all active:scale-95 ${(isDonghuaMode ? pathname === "/donghua" : isMangaMode ? pathname === "/manga" : pathname === "/")
+            ? (isDonghuaMode ? "text-[#1c1b1a] dark:text-[#dbd7d2] font-bold" : isMangaMode ? "text-[#ea580c] font-bold" : "text-white font-bold")
+            : (isDonghuaMode ? "hover:text-[#1c1b1a] dark:hover:text-[#dbd7d2]" : isMangaMode ? "hover:text-[#ea580c]" : "hover:text-white")
             }`}
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -177,10 +206,10 @@ export default function Navbar({ user }: NavbarProps) {
         </Link>
 
         <Link
-          href={isMangaMode ? "/manga/list" : "/animelist"}
-          className={`group flex flex-col items-center gap-1 p-2 transition-all active:scale-95 ${(isMangaMode ? pathname.startsWith("/manga/list") : pathname.startsWith("/animelist"))
-            ? (isMangaMode ? "text-[#ea580c]" : "text-white font-bold")
-            : (isMangaMode ? "hover:text-[#ea580c]" : "hover:text-white")
+          href={isDonghuaMode ? "/donghua/list" : isMangaMode ? "/manga/list" : "/animelist"}
+          className={`group flex flex-col items-center gap-1 p-2 transition-all active:scale-95 ${(isDonghuaMode ? pathname.startsWith("/donghua/list") : isMangaMode ? pathname.startsWith("/manga/list") : pathname.startsWith("/animelist"))
+            ? (isDonghuaMode ? "text-[#1c1b1a] dark:text-[#dbd7d2] font-bold" : isMangaMode ? "text-[#ea580c] font-bold" : "text-white font-bold")
+            : (isDonghuaMode ? "hover:text-[#1c1b1a] dark:hover:text-[#dbd7d2]" : isMangaMode ? "hover:text-[#ea580c]" : "hover:text-white")
             }`}
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -191,31 +220,38 @@ export default function Navbar({ user }: NavbarProps) {
 
         {/* Mobile Mode Switcher - EXPLICIT BUTTON */}
         <Link
-          href={isMangaMode ? "/" : "/manga"}
-          className={`group flex flex-col items-center gap-1 p-2 transition-all active:scale-95 ${isMangaMode
-            ? "text-zinc-400 hover:text-[#ea580c]"
-            : "text-zinc-500 hover:text-white"
+          href={isDonghuaMode ? "/manga" : isMangaMode ? "/" : "/donghua"}
+          className={`group flex flex-col items-center gap-1 p-2 transition-all active:scale-95 ${isDonghuaMode
+            ? "text-[#8a857e] hover:text-[#1c1b1a] dark:text-[#a09c95] dark:hover:text-[#dbd7d2]"
+            : isMangaMode
+              ? "text-zinc-400 hover:text-[#ea580c]"
+              : "text-zinc-500 hover:text-white"
             }`}
         >
-          {isMangaMode ? (
+          {isDonghuaMode ? (
+            /* Show Book icon to go to Manga */
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
+            </svg>
+          ) : isMangaMode ? (
             /* Show TV icon to go to Anime */
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect width="20" height="15" x="2" y="7" rx="2" ry="2" /><polyline points="17 2 12 7 7 2" />
             </svg>
           ) : (
-            /* Show Book icon to go to Manga */
+            /* Show Yin Yang icon to go to Donghua */
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
+              <circle cx="12" cy="12" r="10" /><path d="M12 2a5 5 0 0 0 0 10 5 5 0 0 1 0 10" /><circle cx="12" cy="7" r="2" fill="currentColor" /><circle cx="12" cy="17" r="2" fill="transparent" />
             </svg>
           )}
-          <span className="text-[10px] uppercase font-bold tracking-widest">{isMangaMode ? "Anime" : "Komik"}</span>
+          <span className="text-[10px] uppercase font-bold tracking-widest">{isDonghuaMode ? "Komik" : isMangaMode ? "Anime" : "Donghua"}</span>
         </Link>
 
         <Link
-          href={isMangaMode ? "/manga/history" : "/history"}
-          className={`group flex flex-col items-center gap-1 p-2 transition-all active:scale-95 ${(isMangaMode ? pathname.startsWith("/manga/history") : pathname.startsWith("/history"))
-            ? (isMangaMode ? "text-[#ea580c]" : "text-white font-bold")
-            : (isMangaMode ? "hover:text-[#ea580c]" : "hover:text-white")
+          href={isDonghuaMode ? "/donghua/history" : isMangaMode ? "/manga/history" : "/history"}
+          className={`group flex flex-col items-center gap-1 p-2 transition-all active:scale-95 ${(isDonghuaMode ? pathname.startsWith("/donghua/history") : isMangaMode ? pathname.startsWith("/manga/history") : pathname.startsWith("/history"))
+            ? (isDonghuaMode ? "text-[#1c1b1a] dark:text-[#dbd7d2] font-bold" : isMangaMode ? "text-[#ea580c] font-bold" : "text-white font-bold")
+            : (isDonghuaMode ? "hover:text-[#1c1b1a] dark:hover:text-[#dbd7d2]" : isMangaMode ? "hover:text-[#ea580c]" : "hover:text-white")
             }`}
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

@@ -53,6 +53,7 @@ export default function MangaCard({ manga, onImageError }: MangaCardProps) {
     return (
         <Link
             href={`/manga/detail/${manga.slug}?cover=${encodeURIComponent(src)}`}
+            prefetch={false}
             className="group flex flex-col overflow-hidden bg-[var(--manga-bg)] border-2 border-[var(--manga-border)] rounded-md transition-all duration-300 hover:-translate-y-1 hover:shadow-[4px_4px_0_var(--manga-accent)]"
         >
             <div className="relative aspect-[2/3] overflow-hidden border-b-2 border-[var(--manga-border)]">

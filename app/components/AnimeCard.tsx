@@ -22,6 +22,7 @@ export default function AnimeCard({
   return (
     <Link
       href={href ?? `/detail/${encodeURIComponent(slug)}`}
+      prefetch={false}
       className="group flex flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white transition-all duration-300 hover:-translate-y-1 hover:border-zinc-300 hover:shadow-xl active:translate-y-0 dark:border-zinc-800 dark:bg-zinc-950"
     >
       <div className="relative aspect-[2/3] overflow-hidden bg-zinc-100 dark:bg-zinc-900">

@@ -197,30 +197,37 @@ export default async function DonghuaDetailPage({
                                         </div>
 
                                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 w-full">
-                                            {/* Reverse list if it's new-to-old. Usually API gives latest first. We will render everything as they come, user can scroll or we map it raw. */}
-                                            {detail.episodes_list.map((episode) => {
-                                                // extract episode number roughly from title "Episode 04" -> "04"
-                                                const epMatch = episode.episode.match(/Episode\s(\d+(\.\d+)?)/i);
-                                                let epLabel = epMatch ? epMatch[1] : episode.episode;
-                                                if (epLabel.length > 20) {
-                                                    epLabel = "EP";
-                                                }
+                                            {[...detail.episodes_list]
+                                                .sort((a, b) => {
+                                                    const getNum = (ep: any) => {
+                                                        const match = (ep.episode || "").match(/\d+(\.\d+)?/) || (ep.slug || "").match(/episode?-?\s*(\d+(\.\d+)?)/i);
+                                                        return match ? parseFloat(match[1] || match[0]) : 0;
+                                                    };
+                                                    return getNum(a) - getNum(b);
+                                                })
+                                                .map((episode) => {
+                                                    // extract episode number roughly
+                                                    const epMatch = episode.episode.match(/Episode\s(\d+(\.\d+)?)/i) || episode.slug.match(/episode?-?\s*(\d+(\.\d+)?)/i);
+                                                    let epLabel = epMatch ? epMatch[1] : episode.episode;
+                                                    if (epLabel.length > 20) {
+                                                        epLabel = "EP";
+                                                    }
 
-                                                return (
-                                                    <Link
-                                                        key={episode.slug}
-                                                        href={`/donghua/watch/${encodeURIComponent(episode.slug)}?slug=${encodeURIComponent(slug)}&title=${encodeURIComponent(title)}&image=${encodeURIComponent(poster)}`}
-                                                        className="group flex flex-col items-center justify-center bg-transparent border border-[#e5dcd3] dark:border-[#3a3836] py-3 px-2 text-center transition-all duration-300 hover:bg-[#1c1b1a] hover:border-[#1c1b1a] dark:hover:bg-[#e0dbd3] dark:hover:border-[#e0dbd3]"
-                                                    >
-                                                        <span className="text-[10px] uppercase tracking-[0.2em] text-[#8a857e] group-hover:text-[#8a857e] dark:group-hover:text-[#5c5852] font-sans font-bold transition-colors">
-                                                            EPISODE
-                                                        </span>
-                                                        <span className="text-xl font-serif mt-0.5 text-[#2c2a27] dark:text-[#dbd7d2] group-hover:text-[#f7f5f0] dark:group-hover:text-[#1c1b1a] transition-colors leading-none">
-                                                            {epLabel}
-                                                        </span>
-                                                    </Link>
-                                                );
-                                            })}
+                                                    return (
+                                                        <Link
+                                                            key={episode.slug}
+                                                            href={`/donghua/watch/${encodeURIComponent(episode.slug)}?slug=${encodeURIComponent(slug)}&title=${encodeURIComponent(title)}&image=${encodeURIComponent(poster)}`}
+                                                            className="group flex flex-col items-center justify-center bg-transparent border border-[#e5dcd3] dark:border-[#3a3836] py-3 px-2 text-center transition-all duration-300 hover:bg-[#1c1b1a] hover:border-[#1c1b1a] dark:hover:bg-[#e0dbd3] dark:hover:border-[#e0dbd3]"
+                                                        >
+                                                            <span className="text-[10px] uppercase tracking-[0.2em] text-[#8a857e] group-hover:text-[#8a857e] dark:group-hover:text-[#5c5852] font-sans font-bold transition-colors">
+                                                                EPISODE
+                                                            </span>
+                                                            <span className="text-xl font-serif mt-0.5 text-[#2c2a27] dark:text-[#dbd7d2] group-hover:text-[#f7f5f0] dark:group-hover:text-[#1c1b1a] transition-colors leading-none">
+                                                                {epLabel}
+                                                            </span>
+                                                        </Link>
+                                                    );
+                                                })}
                                         </div>
                                     </div>
                                 )}

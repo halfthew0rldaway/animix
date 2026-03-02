@@ -166,9 +166,10 @@ export default async function DetailPage({
   const season = detail?.season ?? hiAnimeInfo?.season ?? "";
   const totalEpisodes = hiAnimeInfo?.totalEpisodes ?? detail?.episodes?.length;
 
-  const watchHref = detail?.episodes?.[0]
+  const firstEpisode = detail?.episodes?.[detail.episodes.length - 1];
+  const watchHref = firstEpisode
     ? `/watch/${encodeURIComponent(
-      decodeURIComponent(detail.episodes[0].slug)
+      decodeURIComponent(firstEpisode.slug)
         .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // remove accents like ü -> u
         .replace(/walka¼re/gi, "walkure") // hard fix for animasu weird encoding bug
     )}?slug=${encodeURIComponent(
@@ -317,23 +318,37 @@ export default async function DetailPage({
                         <h2 className="text-lg md:text-xl font-black text-zinc-300 uppercase tracking-widest font-[family-name:var(--font-display)]">DAFTAR EPISODE</h2>
                       </div>
                       <div className="grid grid-cols-5 sm:grid-cols-7 md:grid-cols-9 lg:grid-cols-11 xl:grid-cols-13 gap-3">
-                        {detail.episodes.map((episode, idx) => (
-                          <Link
-                            key={episode.slug}
-                            href={`/watch/${encodeURIComponent(
-                              decodeURIComponent(episode.slug)
-                                .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-                                .replace(/walka¼re/gi, "walkure")
-                            )}?slug=${encodeURIComponent(
-                              animeSlug
-                            )}&title=${encodeURIComponent(title)}&image=${encodeURIComponent(poster)}`}
-                            className="group relative bg-zinc-900 hover:bg-green-600 border border-zinc-800 hover:border-green-500 rounded-lg p-3 text-center transition-all hover:scale-110 shadow-lg hover:shadow-green-900/50 hover-lift"
-                          >
-                            <span className="relative z-10 text-sm font-bold text-zinc-300 group-hover:text-white font-[family-name:var(--font-body)]">
-                              {idx + 1}
-                            </span>
-                          </Link>
-                        ))}
+                        {[...detail.episodes]
+                          .sort((a, b) => {
+                            const getNum = (ep: any) => {
+                              const match = (ep.name || "").match(/\d+(\.\d+)?/) || (ep.slug || "").match(/episode?-?\s*(\d+(\.\d+)?)/i);
+                              return match ? parseFloat(match[1] || match[0]) : 0;
+                            };
+                            return getNum(a) - getNum(b);
+                          })
+                          .map((episode) => {
+                            const match = (episode.name || "").match(/\d+(\.\d+)?/) || (episode.slug || "").match(/episode?-?\s*(\d+(\.\d+)?)/i);
+                            const epLabel = match ? (match[1] || match[0]) : "?";
+
+                            return (
+                              <Link
+                                key={episode.slug}
+                                href={`/watch/${encodeURIComponent(
+                                  decodeURIComponent(episode.slug)
+                                    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                                    .replace(/walka¼re/gi, "walkure")
+                                )}?slug=${encodeURIComponent(
+                                  animeSlug
+                                )}&title=${encodeURIComponent(title)}&image=${encodeURIComponent(poster)}`}
+                                className="group relative bg-zinc-900 hover:bg-green-600 border border-zinc-800 hover:border-green-500 rounded-lg p-3 text-center transition-all hover:scale-110 shadow-lg hover:shadow-green-900/50 hover-lift"
+                              >
+                                <span className="relative z-10 text-sm font-bold text-zinc-300 group-hover:text-white font-[family-name:var(--font-body)]">
+                                  {epLabel !== "?" ? epLabel : episode.name}
+                                </span>
+                              </Link>
+                            )
+                          }
+                          )}
                       </div>
                     </div>
                   ) : null}

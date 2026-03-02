@@ -38,10 +38,10 @@ export async function GET(req: NextRequest) {
     "Sec-Fetch-Dest": "empty",
   };
 
-  const result = await safeFetchJson<any>(
+  let result = await safeFetchJson<any>(
     url,
     { next: { revalidate: 60 }, headers: requestHeaders },
-    { cacheKey: `episode:${slug}`, ttlMs: 1000 * 60, errorTtlMs: 1000 * 10 }
+    { cacheKey: `episode:${decodedSlug}`, ttlMs: 1000 * 60, errorTtlMs: 1000 * 10 }
   );
 
   const resHeaders = new Headers();

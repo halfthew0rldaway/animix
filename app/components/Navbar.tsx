@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useMemo, useState } from "react";
 import ModeToggle from "./ModeToggle";
+import TrollModal from "./TrollModal";
 
 type NavbarProps = {
   user?: { name?: string | null; image?: string | null } | null;
@@ -15,6 +16,7 @@ export default function Navbar({ user }: NavbarProps) {
   const pathname = usePathname();
   const { data } = useSession();
   const [query, setQuery] = useState("");
+  const [showTroll, setShowTroll] = useState(false);
 
   const activeUser = useMemo(() => data?.user ?? user ?? null, [data, user]);
 
@@ -170,7 +172,7 @@ export default function Navbar({ user }: NavbarProps) {
           ) : (
             <button
               type="button"
-              onClick={() => signIn()}
+              onClick={() => setShowTroll(true)}
               className={`px-6 py-2 text-xs font-bold uppercase tracking-wider transition-colors border shadow-sm ${isDonghuaMode
                 ? "rounded border-[#8a857e] text-[#1c1b1a] hover:bg-[#e5dcd3] dark:text-[#dbd7d2] dark:hover:bg-[#3a3836]"
                 : isReadPage || isMangaMode
@@ -260,6 +262,7 @@ export default function Navbar({ user }: NavbarProps) {
           <span className="text-[10px] uppercase font-bold tracking-widest">Riwayat</span>
         </Link>
       </nav>
+      <TrollModal isOpen={showTroll} onClose={() => setShowTroll(false)} />
     </header>
   );
 }

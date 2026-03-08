@@ -21,21 +21,23 @@
 
 ### 🎬 Cinematic Anime Player
 - **Zero-Latency Streaming**: Optimized playback for instant start times.
-- **Immersive UI**: Distraction-free mode with cinemtic controls.
+- **Immersive UI**: Distraction-free mode with cinematic controls.
 - **Smart History**: Auto-resume exactly where you left off.
-- **Server Selection**: Multiple sources to ensure 100% uptime.
+- **Multi-Source Support**: Integration with various providers for 100% uptime.
 
 ### 📚 Revolutionary Manga Reader
 - **Comic Mode**: A unique, tactile reading experience that mimics real comic books.
 - **Fluid Animations**: Page flips, slide transitions, and dynamic layouts.
-- **Chapter Preloading**: Seamless reading without loading spinners.
-- **Comic Aesthetics**: Custom "Speed Lines" and "Speech Bubble" loaders.
+- **Smart Preloading**: Seamless reading without loading spinners by fetching chapters in advance.
+
+### 🍱 Curated Donghua Section
+- **Traditional Aesthetics**: A dedicated space for Chinese animation with a curated look and feel.
+- **Infinite Discovery**: Seamlessly browse through ongoing and completed epics.
 
 ### 🎨 Premium Aesthetic
 - **Reactive Design**: Every click, hover, and scroll feels alive with staggered animations.
 - **Fancy Typography**: Curated fonts (Outfit, Cinzel) for a premium look.
 - **Dark Mode Native**: Designed specifically for comfortable late-night marathons.
-- **Animated Backgrounds**: Subtle gradients and vivid backdrops.
 
 ---
 
@@ -45,7 +47,8 @@
 - **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
 - **Database**: [Prisma + PostgreSQL](https://www.prisma.io/)
 - **Auth**: [NextAuth.js](https://next-auth.js.org/)
-- **Animations**: CSS Keyframes + Transformations (No heavy JS libs)
+- **Data Fetching**: [Server Components + SWR Patterns](https://nextjs.org/docs/app/building-your-application/data-fetching)
+- **Metadata**: [AniList API Integration](https://anilist.co/)
 
 ---
 
@@ -60,12 +63,13 @@
 2. **Install dependencies**
    ```bash
    npm install
-   # or
-   pnpm install
    ```
 
 3. **Set up Environment Variables**
    Create a `.env` file based on `.env.example`.
+   ```bash
+   cp .env.example .env
+   ```
 
 4. **Run the development server**
    ```bash

@@ -2,8 +2,7 @@ import Link from "next/link";
 import Navbar from "../../components/Navbar";
 import { AuthUserSession } from "../../libs/auth-libs";
 import { buildApiUrl, safeFetchJson } from "../../libs/api";
-import { fetchAniListById, fetchAniListByTitle } from "../../libs/anilist";
-import { fetchHiAnimeInfoByTitle } from "../../libs/consumet";
+import { fetchAniListByTitle } from "../../libs/anilist";
 
 type EpisodeItem = { slug: string; name: string };
 
@@ -84,7 +83,6 @@ export default async function DetailPage({
 
   let detail: Detail | null = null;
   let error: string | null = null;
-  let hiAnimeInfo: Awaited<ReturnType<typeof fetchHiAnimeInfoByTitle>> = null;
   let aniListMedia: Awaited<ReturnType<typeof fetchAniListByTitle>> = null;
 
   try {
@@ -129,18 +127,8 @@ export default async function DetailPage({
     console.error(`Detail page error for ${actualSlug}:`, error);
   }
 
-  if (detail?.title) {
-    try {
-      hiAnimeInfo = await fetchHiAnimeInfoByTitle(detail.title);
-    } catch {
-      hiAnimeInfo = null;
-    }
-  }
-
   try {
-    if (hiAnimeInfo?.alID) {
-      aniListMedia = await fetchAniListById(hiAnimeInfo.alID);
-    } else if (detail?.title) {
+    if (detail?.title) {
       aniListMedia = await fetchAniListByTitle(detail.title, { slug: detail.slug });
     }
   } catch {
@@ -154,17 +142,16 @@ export default async function DetailPage({
     aniListMedia?.coverImage?.extraLarge ??
     aniListMedia?.coverImage?.large ??
     detail?.poster ??
-    hiAnimeInfo?.image ??
     "";
   const banner = aniListMedia?.bannerImage ?? detailBanner ?? poster;
   const animeSlug = detail?.slug ?? slug;
   const synopsisRaw =
-    detail?.synopsis ?? hiAnimeInfo?.description ?? aniListMedia?.description ?? "";
+    detail?.synopsis ?? aniListMedia?.description ?? "";
   const synopsis = synopsisRaw ? stripHtml(synopsisRaw) : "";
-  const genres = detail?.genres ?? hiAnimeInfo?.genres?.map((name) => ({ slug: name, name })) ?? [];
-  const status = detail?.status ?? hiAnimeInfo?.status ?? "";
-  const season = detail?.season ?? hiAnimeInfo?.season ?? "";
-  const totalEpisodes = hiAnimeInfo?.totalEpisodes ?? detail?.episodes?.length;
+  const genres = detail?.genres ?? [];
+  const status = detail?.status ?? "";
+  const season = detail?.season ?? "";
+  const totalEpisodes = detail?.episodes?.length;
 
   const firstEpisode = detail?.episodes?.[detail.episodes.length - 1];
   const watchHref = firstEpisode
